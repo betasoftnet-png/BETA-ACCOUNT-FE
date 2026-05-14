@@ -145,9 +145,9 @@ function App() {
       <main className="account-main">
         <header className="account-header">
           <div className="user-brief">
-            <div className="avatar-large">{user.name?.[0] || 'U'}</div>
+            <div className="avatar-large">{user.firstName?.[0] || 'U'}</div>
             <div className="header-titles">
-              <h1>Welcome, {user.name}</h1>
+              <h1>Welcome, {user.firstName} {user.lastName}</h1>
               <p>Manage your info, privacy, and security to make B2Auth work better for you.</p>
             </div>
           </div>
@@ -166,20 +166,49 @@ function App() {
                 <h2>Personal Information</h2>
                 <div className="info-grid">
                   <div className="info-block">
-                    <label>Full Name</label>
-                    <div className="value">{user.name}</div>
+                    <label>First Name</label>
+                    <div className="value">{user.firstName || 'Not set'}</div>
                   </div>
                   <div className="info-block">
-                    <label>Primary Email</label>
-                    <div className="value">{user.email}</div>
+                    <label>Last Name</label>
+                    <div className="value">{user.lastName || 'Not set'}</div>
                   </div>
                   <div className="info-block">
                     <label>Username</label>
                     <div className="value">@{user.username}</div>
                   </div>
                   <div className="info-block">
+                    <label>Primary Email</label>
+                    <div className="value-with-badge">
+                      <span>{user.email || 'Not set'}</span>
+                      {user.isPrimary && <span className="mini-badge primary">Primary</span>}
+                    </div>
+                  </div>
+                  <div className="info-block">
+                    <label>Recovery Email</label>
+                    <div className="value">{user.recoveryEmail || 'Not set'}</div>
+                  </div>
+                  <div className="info-block">
+                    <label>Phone Number</label>
+                    <div className="value">{user.phoneNumber || 'Not set'}</div>
+                  </div>
+                  <div className="info-block">
+                    <label>Date of Birth</label>
+                    <div className="value">{user.dob ? new Date(user.dob).toLocaleDateString() : 'Not set'}</div>
+                  </div>
+                  <div className="info-block">
                     <label>Account Type</label>
                     <div className="value-badge">{user.accountType}</div>
+                  </div>
+                  {user.organization && (
+                    <div className="info-block">
+                      <label>Organization</label>
+                      <div className="value">{user.organization.name}</div>
+                    </div>
+                  )}
+                  <div className="info-block">
+                    <label>Created On</label>
+                    <div className="value">{new Date(user.createdAt).toLocaleDateString()}</div>
                   </div>
                 </div>
               </motion.div>
