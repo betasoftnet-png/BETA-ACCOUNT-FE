@@ -4,7 +4,8 @@ import {
   User, ShieldCheck, Key, Bell, CreditCard, 
   ChevronRight, LogOut, Shield, Smartphone, 
   CheckCircle2, AlertCircle, Copy, RefreshCw,
-  Mail, Info, Globe, Lock, Eye, Trash2, HelpCircle, Grid
+  Mail, Info, Globe, Lock, Eye, Trash2, HelpCircle, Grid,
+  Home, HardDrive, Database, Settings, ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
@@ -14,7 +15,7 @@ const API_BASE = import.meta.env.VITE_API_BASE;
 
 function App() {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   
@@ -98,6 +99,13 @@ function App() {
 
   if (!user) return <div className="loading-screen">Loading your B2Auth Account...</div>;
 
+  const formatStorage = (bytes) => {
+    const gb = bytes / (1024 * 1024 * 1024);
+    return gb.toFixed(1) + ' GB';
+  };
+
+  const storagePercentage = (user.storageUsed / user.storageLimit) * 100;
+
   return (
     <div className="account-app-container">
       {/* Top Navigation */}
@@ -121,6 +129,13 @@ function App() {
         <nav className="account-sidebar">
           <div className="sidebar-nav">
             <button 
+              className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}
+              onClick={() => setActiveTab('home')}
+            >
+              <Home size={20} />
+              <span>Home</span>
+            </button>
+            <button 
               className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
@@ -128,18 +143,18 @@ function App() {
               <span>Personal info</span>
             </button>
             <button 
-              className={`nav-item ${activeTab === 'security' ? 'active' : ''}`}
-              onClick={() => setActiveTab('security')}
-            >
-              <ShieldCheck size={20} />
-              <span>Security</span>
-            </button>
-            <button 
               className={`nav-item ${activeTab === 'privacy' ? 'active' : ''}`}
               onClick={() => setActiveTab('privacy')}
             >
               <Shield size={20} />
               <span>Data & privacy</span>
+            </button>
+            <button 
+              className={`nav-item ${activeTab === 'security' ? 'active' : ''}`}
+              onClick={() => setActiveTab('security')}
+            >
+              <ShieldCheck size={20} />
+              <span>Security</span>
             </button>
           </div>
 
@@ -167,55 +182,114 @@ function App() {
 
           <section className="content-area">
             <AnimatePresence mode="wait">
+              {activeTab === 'home' && (
+                <motion.div 
+                  key="home"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="dashboard-grid"
+                >
+                  <div className="summary-card">
+                    <div className="card-body">
+                      <div className="card-icon-header"><Shield color="#1a73e8" size={40} /></div>
+                      <h3>Privacy & personalization</h3>
+                      <p>See the data in your BNX Account and choose what activity is saved to personalize your BNX experience</p>
+                    </div>
+                    <div className="card-footer-link" onClick={() => setActiveTab('privacy')}>
+                      Manage your data & privacy
+                    </div>
+                  </div>
+
+                  <div className="summary-card">
+                    <div className="card-body">
+                      <div className="card-icon-header"><Smartphone color="#1a73e8" size={40} /></div>
+                      <h3>Security recommendations</h3>
+                      <p>Recommended actions found in the Security Checkup to help keep your account secure</p>
+                    </div>
+                    <div className="card-footer-link" onClick={() => setActiveTab('security')}>
+                      Protect your account
+                    </div>
+                  </div>
+
+                  <div className="summary-card">
+                    <div className="card-body">
+                      <div className="card-icon-header"><HardDrive color="#1a73e8" size={40} /></div>
+                      <h3>Account storage</h3>
+                      <p>Your account storage is shared across BNX services, like BNX Mail and Drive</p>
+                      <div className="storage-status">
+                        <div className="progress-bar">
+                          <div className="progress-fill" style={{ width: `${storagePercentage}%` }}></div>
+                        </div>
+                        <span className="storage-label">{formatStorage(user.storageUsed)} of {formatStorage(user.storageLimit)} used</span>
+                      </div>
+                    </div>
+                    <div className="card-footer-link">
+                      Manage storage
+                    </div>
+                  </div>
+
+                  <div className="summary-card">
+                    <div className="card-body">
+                      <div className="card-icon-header"><Info color="#1a73e8" size={40} /></div>
+                      <h3>Personal info</h3>
+                      <p>See your basic info and update it to help others find you and to make your BNX services more personal</p>
+                    </div>
+                    <div className="card-footer-link" onClick={() => setActiveTab('profile')}>
+                      Manage personal info
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {activeTab === 'profile' && (
                 <motion.div 
                   key="profile"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="content-card"
                 >
-                  <h2>Personal info</h2>
-                  <p className="card-desc">Basic info, like your name and photo, that you use on BNX services</p>
-                  
-                  <div className="info-grid">
-                    <div className="info-block">
-                      <label>NAME</label>
-                      <div className="value">{user.firstName} {user.lastName}</div>
-                    </div>
-                    <div className="info-block">
-                      <label>USERNAME</label>
-                      <div className="value">@{user.username}</div>
-                    </div>
-                    <div className="info-block">
-                      <label>EMAIL</label>
-                      <div className="value-with-badge">
-                        <span>{user.email || 'Not set'}</span>
-                        {user.isPrimary && <span className="mini-badge primary">Primary</span>}
-                      </div>
-                    </div>
-                    <div className="info-block">
-                      <label>RECOVERY EMAIL</label>
-                      <div className="value">{user.recoveryEmail || 'Not set'}</div>
-                    </div>
-                    <div className="info-block">
-                      <label>PHONE</label>
-                      <div className="value">{user.phoneNumber || 'Not set'}</div>
-                    </div>
-                    <div className="info-block">
-                      <label>BIRTHDAY</label>
-                      <div className="value">{user.dob ? new Date(user.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Not set'}</div>
-                    </div>
-                    <div className="info-block">
-                      <label>ACCOUNT TYPE</label>
-                      <div className="value-badge">{user.accountType}</div>
-                    </div>
-                    {user.organization && (
+                  <div className="content-card mb-24">
+                    <h2>Basic info</h2>
+                    <p className="card-desc">Some info may be visible to other people using BNX services. <a href="#">Learn more</a></p>
+                    
+                    <div className="info-grid">
                       <div className="info-block">
-                        <label>ORGANIZATION</label>
-                        <div className="value">{user.organization.name}</div>
+                        <label>PHOTO</label>
+                        <div className="value">
+                          <div className="avatar-small">{user.firstName?.[0]}</div>
+                        </div>
                       </div>
-                    )}
+                      <div className="info-block">
+                        <label>NAME</label>
+                        <div className="value">{user.firstName} {user.lastName}</div>
+                      </div>
+                      <div className="info-block">
+                        <label>BIRTHDAY</label>
+                        <div className="value">{user.dob ? new Date(user.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Not set'}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="content-card">
+                    <h2>Contact info</h2>
+                    <div className="info-grid">
+                      <div className="info-block">
+                        <label>EMAIL</label>
+                        <div className="value-with-badge">
+                          <span>{user.email || 'Not set'}</span>
+                          {user.isPrimary && <span className="mini-badge primary">Primary</span>}
+                        </div>
+                      </div>
+                      <div className="info-block">
+                        <label>RECOVERY EMAIL</label>
+                        <div className="value">{user.recoveryEmail || 'Not set'}</div>
+                      </div>
+                      <div className="info-block">
+                        <label>PHONE</label>
+                        <div className="value">{user.phoneNumber || 'Not set'}</div>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -226,42 +300,43 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="content-card"
                 >
-                  <h2>Security</h2>
-                  <p className="card-desc">Settings and recommendations to help you keep your account secure</p>
+                  <div className="content-card">
+                    <h2>Signing in to BNX</h2>
+                    <p className="card-desc">Settings and recommendations to help you keep your account secure</p>
 
-                  <div className="security-list">
-                    <div className="security-item">
-                      <div className="item-info">
-                        <div className="item-icon"><Smartphone size={20} /></div>
-                        <div>
-                          <h3>2-Step Verification</h3>
-                          <p>Protect your account with an extra layer of security.</p>
-                        </div>
-                      </div>
-                      <div className="item-action">
-                        {user.twoFactorEnabled ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <CheckCircle2 size={16} color="#188038" />
-                            <span className="status-badge success">On</span>
+                    <div className="security-list">
+                      <div className="security-item">
+                        <div className="item-info">
+                          <div className="item-icon"><Smartphone size={20} /></div>
+                          <div>
+                            <h3>2-Step Verification</h3>
+                            <p>Protect your account with an extra layer of security.</p>
                           </div>
-                        ) : (
-                          <button className="setup-btn" onClick={handleInitiate2FA}>Set up</button>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="security-item clickable">
-                      <div className="item-info">
-                        <div className="item-icon"><Key size={20} /></div>
-                        <div>
-                          <h3>Password</h3>
-                          <p>Last changed {new Date(user.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <div className="item-action">
+                          {user.twoFactorEnabled ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <CheckCircle2 size={16} color="#188038" />
+                              <span className="status-badge success">On</span>
+                            </div>
+                          ) : (
+                            <button className="setup-btn" onClick={handleInitiate2FA}>Set up</button>
+                          )}
                         </div>
                       </div>
-                      <div className="item-action">
-                        <ChevronRight size={20} color="var(--text-muted)" />
+                      
+                      <div className="security-item clickable">
+                        <div className="item-info">
+                          <div className="item-icon"><Key size={20} /></div>
+                          <div>
+                            <h3>Password</h3>
+                            <p>Last changed {new Date(user.createdAt).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <div className="item-action">
+                          <ChevronRight size={20} color="var(--text-muted)" />
+                        </div>
                       </div>
                     </div>
                   </div>
