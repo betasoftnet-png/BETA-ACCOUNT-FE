@@ -98,6 +98,25 @@ function App() {
     }
   };
 
+  const handleDisable2FA = async () => {
+    if (!window.confirm("Are you sure you want to disable 2-Step Verification?")) return;
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('bnx_accessToken');
+      const res = await axios.post(`${API_BASE}/users/2fa/disable`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setMessage({ type: 'success', text: 'Two-Factor Authentication disabled successfully.' });
+        setUser({ ...user, twoFactorEnabled: false });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to disable 2FA' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!user) return <div className="loading-screen">Loading your B2Auth Account...</div>;
 
   const formatStorage = (bytes) => {
@@ -317,12 +336,21 @@ function App() {
                           </div>
                         </div>
                         <div className="item-action">
-                          {user.twoFactorEnabled ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <CheckCircle2 size={16} color="#188038" />
-                              <span className="status-badge success">On</span>
-                            </div>
-                          ) : (
+                           {user.twoFactorEnabled ? (
+                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                 <CheckCircle2 size={16} color="#188038" />
+                                 <span className="status-badge success">On</span>
+                               </div>
+                               <button 
+                                 className="setup-btn" 
+                                 style={{ color: '#d93025', borderColor: '#dadce0' }}
+                                 onClick={handleDisable2FA}
+                               >
+                                 Disable
+                               </button>
+                             </div>
+                           ) : (
                             <button className="setup-btn" onClick={handleInitiate2FA}>Set up</button>
                           )}
                         </div>
