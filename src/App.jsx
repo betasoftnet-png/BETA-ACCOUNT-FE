@@ -77,6 +77,25 @@ function App() {
     }
   };
 
+  const handleEnable2FA = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('bnx_accessToken');
+      const res = await axios.post(`${API_BASE}/users/2fa/enable`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setMessage({ type: 'success', text: 'Two-Factor Authentication enabled successfully!' });
+        setUser({ ...user, twoFactorEnabled: true });
+      }
+    } catch (err) {
+      // If simple enable fails (no secret), then initiate full setup
+      handleInitiate2FA();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleVerify2FA = async () => {
     setLoading(true);
     try {
@@ -351,7 +370,7 @@ function App() {
                                </button>
                              </div>
                            ) : (
-                            <button className="setup-btn" onClick={handleInitiate2FA}>Set up</button>
+                            <button className="setup-btn" onClick={handleEnable2FA}>Set up</button>
                           )}
                         </div>
                       </div>
