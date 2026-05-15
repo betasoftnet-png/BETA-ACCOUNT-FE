@@ -24,6 +24,7 @@ function App() {
   const [twoFactorSecret, setTwoFactorSecret] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -100,11 +101,12 @@ function App() {
   if (!user) return <div className="loading-screen">Loading your B2Auth Account...</div>;
 
   const formatStorage = (bytes) => {
+    if (!bytes) return '0 GB';
     const gb = bytes / (1024 * 1024 * 1024);
     return gb.toFixed(1) + ' GB';
   };
 
-  const storagePercentage = (user.storageUsed / user.storageLimit) * 100;
+  const storagePercentage = user.storageLimit > 0 ? (user.storageUsed / user.storageLimit) * 100 : 0;
 
   return (
     <div className="account-app-container">
@@ -161,7 +163,7 @@ function App() {
           <div className="sidebar-footer">
             <button className="logout-btn" onClick={() => {
               localStorage.clear();
-              window.location.href = 'http://localhost:5173';
+              window.location.href = 'https://b2auth.com/';
             }}>
               <LogOut size={18} />
               <span>Sign out</span>
@@ -271,23 +273,23 @@ function App() {
                     </div>
                   </div>
 
-                  <div className="content-card">
-                    <h2>Contact info</h2>
+                  <div className="content-card mb-24">
+                    <h2>Other info and preferences</h2>
+                    <p className="card-desc">Options and settings for your BNX services</p>
                     <div className="info-grid">
-                      <div className="info-block">
-                        <label>EMAIL</label>
-                        <div className="value-with-badge">
-                          <span>{user.email || 'Not set'}</span>
-                          {user.isPrimary && <span className="mini-badge primary">Primary</span>}
+                      <div className="info-block clickable">
+                        <label>LANGUAGE</label>
+                        <div className="value-with-action">
+                          <span>English (United States)</span>
+                          <ChevronRight size={18} color="var(--text-muted)" />
                         </div>
                       </div>
-                      <div className="info-block">
-                        <label>RECOVERY EMAIL</label>
-                        <div className="value">{user.recoveryEmail || 'Not set'}</div>
-                      </div>
-                      <div className="info-block">
-                        <label>PHONE</label>
-                        <div className="value">{user.phoneNumber || 'Not set'}</div>
+                      <div className="info-block clickable">
+                        <label>ACCESSIBILITY</label>
+                        <div className="value-with-action">
+                          <span>High contrast off</span>
+                          <ChevronRight size={18} color="var(--text-muted)" />
+                        </div>
                       </div>
                     </div>
                   </div>

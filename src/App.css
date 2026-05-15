@@ -262,7 +262,7 @@ body {
 /* Dashboard Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 24px;
   width: 100%;
 }
@@ -416,6 +416,24 @@ body {
   border-radius: 50%;
   font-size: 18px;
   font-weight: 500;
+}
+
+.value-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.info-block.clickable {
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0 -24px;
+  padding: 16px 24px;
+}
+
+.info-block.clickable:hover {
+  background: var(--bg-secondary);
 }
 
 /* Security Tab Styling */
