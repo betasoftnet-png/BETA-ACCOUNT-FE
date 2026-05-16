@@ -712,3 +712,113 @@ body {
   background: #e6f4ea;
   color: #137333;
 }
+
+/* Emails Tab Styles */
+.email-list-elite {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.email-item-elite {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.email-item-elite:hover {
+  border-color: var(--primary);
+  background: var(--bg-secondary);
+}
+
+.email-item-elite.primary {
+  border-left: 4px solid var(--primary);
+  background: var(--primary-soft);
+}
+
+.email-info-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.email-icon-box {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.email-text h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.email-text p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 2px 0 0 0;
+}
+
+.badge-primary {
+  background: #188038;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.make-primary-btn {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--primary);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.make-primary-btn:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+.primary-email-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #188038;
+  font-weight: 500;
+}
+
+.info-box-light {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fef7e0;
+  border-radius: 8px;
+  color: #b06000;
+  font-size: 13px;
+}

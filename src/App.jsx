@@ -25,6 +25,7 @@ function App() {
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [mailboxes, setMailboxes] = useState([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -49,12 +50,45 @@ function App() {
       });
       if (res.data.success) {
         setUser(res.data.data);
+        fetchEmails(token);
       }
     } catch (err) {
       console.error("Failed to fetch profile", err);
       if (err.response?.status === 401) {
         window.location.href = 'https://b2auth.com/';
       }
+    }
+  };
+  const fetchEmails = async (token) => {
+    try {
+      const res = await axios.get(`${API_BASE}/emails/list`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setMailboxes(res.data.data.emails);
+      }
+    } catch (err) {
+      console.error("Failed to fetch emails", err);
+    }
+  };
+
+  const handleMakePrimary = async (emailId) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('bnx_accessToken');
+      // Using the verification flow to securely update primary email
+      const res = await axios.post(
+        `${API_BASE}/verification/initiate/${emailId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.data.success) {
+        window.location.href = res.data.data.redirectUrl;
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to initiate primary email update' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -183,6 +217,13 @@ function App() {
               <span>Personal info</span>
             </button>
             <button 
+              className={`nav-item ${activeTab === 'emails' ? 'active' : ''}`}
+              onClick={() => setActiveTab('emails')}
+            >
+              <Mail size={20} />
+              <span>Emails & Identities</span>
+            </button>
+            <button 
               className={`nav-item ${activeTab === 'privacy' ? 'active' : ''}`}
               onClick={() => setActiveTab('privacy')}
             >
@@ -232,6 +273,21 @@ function App() {
                 >
                   <div className="summary-card">
                     <div className="card-body">
+                      <div className="card-icon-header"><Mail color="#1a73e8" size={40} /></div>
+                      <h3>Emails & Identities</h3>
+                      <p>Manage your primary and secondary email addresses associated with this account</p>
+                      <div className="primary-email-preview">
+                        <CheckCircle2 size={16} color="#188038" />
+                        <span>{user.email}</span>
+                      </div>
+                    </div>
+                    <div className="card-footer-link" onClick={() => setActiveTab('emails')}>
+                      Manage your emails
+                    </div>
+                  </div>
+
+                  <div className="summary-card">
+                    <div className="card-body">
                       <div className="card-icon-header"><Shield color="#1a73e8" size={40} /></div>
                       <h3>Privacy & personalization</h3>
                       <p>See the data in your BNX Account and choose what activity is saved to personalize your BNX experience</p>
@@ -268,15 +324,52 @@ function App() {
                       Manage storage
                     </div>
                   </div>
+                </motion.div>
+              )}
 
-                  <div className="summary-card">
-                    <div className="card-body">
-                      <div className="card-icon-header"><Info color="#1a73e8" size={40} /></div>
-                      <h3>Personal info</h3>
-                      <p>See your basic info and update it to help others find you and to make your BNX services more personal</p>
+              {activeTab === 'emails' && (
+                <motion.div 
+                  key="emails"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="content-card">
+                    <h2>Your Email Identities</h2>
+                    <p className="card-desc">Your primary email is used for account-related notifications and as your default identity.</p>
+                    
+                    <div className="email-list-elite">
+                      {mailboxes.map((mailbox) => (
+                        <div className={`email-item-elite ${mailbox.isPrimary ? 'primary' : ''}`} key={mailbox.emailId}>
+                          <div className="email-info-group">
+                            <div className="email-icon-box">
+                              <Mail size={20} />
+                            </div>
+                            <div className="email-text">
+                              <h3>{mailbox.email}</h3>
+                              <p>{mailbox.isPrimary ? 'Primary email' : 'Secondary email'}</p>
+                            </div>
+                          </div>
+                          <div className="email-actions">
+                            {mailbox.isPrimary ? (
+                              <span className="badge-primary">Primary</span>
+                            ) : (
+                              <button 
+                                className="make-primary-btn"
+                                onClick={() => handleMakePrimary(mailbox.emailId)}
+                                disabled={loading}
+                              >
+                                {loading ? 'Processing...' : 'Make Primary'}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="card-footer-link" onClick={() => setActiveTab('profile')}>
-                      Manage personal info
+
+                    <div className="info-box-light" style={{ marginTop: '24px' }}>
+                      <Info size={18} />
+                      <p>To add a new email address, you must register it through the BNX Mail application.</p>
                     </div>
                   </div>
                 </motion.div>
