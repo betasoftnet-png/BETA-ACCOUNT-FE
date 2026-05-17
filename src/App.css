@@ -812,13 +812,33 @@ body {
   font-weight: 500;
 }
 
-.info-box-light {
+.type-badge-elite {
+  background: #f1f3f4;
+  color: #3c4043;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.account-tag-elite {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  background: var(--primary-soft);
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.value-with-badge {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background: #fef7e0;
-  border-radius: 8px;
-  color: #b06000;
-  font-size: 13px;
 }

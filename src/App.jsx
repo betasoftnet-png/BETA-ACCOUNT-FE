@@ -299,9 +299,13 @@ function App() {
 
                   <div className="summary-card">
                     <div className="card-body">
-                      <div className="card-icon-header"><Smartphone color="#1a73e8" size={40} /></div>
-                      <h3>Security recommendations</h3>
-                      <p>Recommended actions found in the Security Checkup to help keep your account secure</p>
+                      <div className="card-icon-header"><ShieldCheck color="#1a73e8" size={40} /></div>
+                      <h3>Account & Security</h3>
+                      <p>Security checkup and recommendations for your {user.accountType} account.</p>
+                      <div className="account-tag-elite">
+                        <Globe size={14} />
+                        <span>{user.accountType} Account</span>
+                      </div>
                     </div>
                     <div className="card-footer-link" onClick={() => setActiveTab('security')}>
                       Protect your account
@@ -394,12 +398,52 @@ function App() {
                         </div>
                       </div>
                       <div className="info-block">
-                        <label>NAME</label>
-                        <div className="value">{user.firstName} {user.lastName}</div>
+                        <label>FULL NAME</label>
+                        <div className="value">{user.fullName || (user.firstName + ' ' + user.lastName)}</div>
+                      </div>
+                      <div className="info-block">
+                        <label>USERNAME</label>
+                        <div className="value">{user.username}</div>
+                      </div>
+                      <div className="info-block">
+                        <label>ACCOUNT ID</label>
+                        <div className="value">#{user.id}</div>
                       </div>
                       <div className="info-block">
                         <label>BIRTHDAY</label>
                         <div className="value">{user.dob ? new Date(user.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Not set'}</div>
+                      </div>
+                      <div className="info-block">
+                        <label>ACCOUNT TYPE</label>
+                        <div className="value">
+                          <span className="type-badge-elite">{user.accountType}</span>
+                        </div>
+                      </div>
+                      <div className="info-block">
+                        <label>JOINED ON</label>
+                        <div className="value">{user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A'}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="content-card mb-24">
+                    <h2>Contact info</h2>
+                    <p className="card-desc">Your contact information used for communication and recovery.</p>
+                    <div className="info-grid">
+                      <div className="info-block">
+                        <label>PRIMARY EMAIL</label>
+                        <div className="value-with-badge">
+                          <span>{user.email}</span>
+                          {user.isPrimary && <span className="mini-badge primary">Primary</span>}
+                        </div>
+                      </div>
+                      <div className="info-block">
+                        <label>RECOVERY EMAIL</label>
+                        <div className="value">{user.recoveryEmail || 'None added'}</div>
+                      </div>
+                      <div className="info-block">
+                        <label>PHONE NUMBER</label>
+                        <div className="value">{user.phoneNumber || 'None added'}</div>
                       </div>
                     </div>
                   </div>
