@@ -170,6 +170,52 @@ function App() {
     }
   };
 
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('bnx_accessToken');
+      const res = await axios.post(`${API_BASE}/users/profile-picture`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      if (res.data.success) {
+        setMessage({ type: 'success', text: 'Profile picture updated successfully!' });
+        setUser({ ...user, profilePicture: res.data.data.profilePicture });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to upload photo' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAvatarDelete = async () => {
+    if (!window.confirm("Are you sure you want to remove your profile picture?")) return;
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('bnx_accessToken');
+      const res = await axios.delete(`${API_BASE}/users/profile-picture`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setMessage({ type: 'success', text: 'Profile picture removed.' });
+        setUser({ ...user, profilePicture: null });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to remove photo' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!user) return <div className="loading-screen">Loading your B2Auth Account...</div>;
 
   const formatStorage = (bytes) => {
@@ -193,8 +239,12 @@ function App() {
         <div className="top-nav-right">
           <button className="top-icon-btn"><HelpCircle size={20} /></button>
           <button className="top-icon-btn"><Grid size={20} /></button>
-          <div className="user-avatar-mini" title={user.email}>
-            {user.firstName?.[0] || 'U'}
+          <div className="user-avatar-mini" title={user.email} style={{ overflow: 'hidden' }}>
+            <img 
+              src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
+              alt={user.firstName}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </div>
         </div>
       </header>
@@ -253,7 +303,13 @@ function App() {
         <main className="account-main">
           <header className="account-header">
             <div className="user-brief">
-              <div className="avatar-large">{user.firstName?.[0] || 'U'}</div>
+              <div className="avatar-large" style={{ overflow: 'hidden' }}>
+                <img 
+                  src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
+                  alt={user.firstName}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
               <div className="header-titles">
                 <h1>Welcome, {user.firstName}</h1>
                 <p>Manage your info, privacy, and security to make B2Auth work better for you.</p>
@@ -393,8 +449,35 @@ function App() {
                     <div className="info-grid">
                       <div className="info-block">
                         <label>PHOTO</label>
-                        <div className="value">
-                          <div className="avatar-small">{user.firstName?.[0]}</div>
+                        <div className="value" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div className="avatar-small" style={{ overflow: 'hidden' }}>
+                            <img 
+                              src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
+                              alt={user.firstName}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          </div>
+                          <div>
+                            <input 
+                              type="file" 
+                              id="avatar-upload" 
+                              accept="image/*" 
+                              style={{ display: 'none' }} 
+                              onChange={handleAvatarUpload}
+                            />
+                            <label htmlFor="avatar-upload" className="setup-btn" style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '13px' }}>
+                              Change photo
+                            </label>
+                            {user.profilePicture && (
+                              <button 
+                                onClick={handleAvatarDelete}
+                                className="setup-btn" 
+                                style={{ marginLeft: '8px', color: '#d93025', borderColor: '#dadce0', padding: '6px 12px', fontSize: '13px' }}
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="info-block">
