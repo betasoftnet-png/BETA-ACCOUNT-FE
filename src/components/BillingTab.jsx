@@ -11,12 +11,18 @@ function BillingTab({ user }) {
     const fetchSubscription = async () => {
       try {
         const response = await fetch(`https://cliks.beta-softnet.com/api/v1/business/subscription/${user.email}`);
+        
+        if (response.status === 404) {
+          setSubData(null);
+          return;
+        }
+
         const result = await response.json();
         
         if (result.success) {
           setSubData(result.data);
         } else {
-          setError('Failed to load subscription details.');
+          setError(result.message || 'Failed to load subscription details.');
         }
       } catch (err) {
         setError('Error fetching subscription details.');
