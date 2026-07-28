@@ -842,3 +842,243 @@ body {
   align-items: center;
   gap: 12px;
 }
+
+/* Billing Tab Styles */
+.billing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.payment-card-visual {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+  aspect-ratio: 1.58 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.payment-card-chip {
+  width: 40px;
+  height: 30px;
+  background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+  border-radius: 4px;
+}
+
+.payment-card-number {
+  font-size: 18px;
+  letter-spacing: 2px;
+  font-family: monospace;
+  margin: 16px 0;
+}
+
+.payment-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-card-holder {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.payment-card-expiry {
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.payment-card-logo {
+  font-size: 20px;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* History table */
+.billing-table-wrapper {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.billing-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.billing-table th {
+  padding: 12px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.billing-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.badge-status-paid {
+  background: #e6f4ea;
+  color: #137333;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.download-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.download-link:hover {
+  text-decoration: underline;
+}
+
+/* Storage breakdown */
+.storage-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.storage-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.storage-breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-secondary);
+}
+
+.storage-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.storage-color-dot.mail { background: #1a73e8; }
+.storage-color-dot.drive { background: #34a853; }
+.storage-color-dot.system { background: #fbbc05; }
+
+.storage-item-name {
+  font-weight: 500;
+  flex: 1;
+}
+
+.storage-item-val {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Plan Upgrade cards */
+.upgrade-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.plan-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.plan-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.plan-card.featured {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.plan-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.plan-price {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 12px 0;
+  color: var(--text-main);
+}
+
+.plan-price span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.plan-features {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  list-style: none;
+  padding: 0;
+}
+
+.plan-features li {
+  margin-bottom: 6px;
+}
+
+.plan-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.plan-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.plan-card.featured .plan-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.plan-card.featured .plan-btn:hover {
+  background: var(--primary-hover);
+}
+

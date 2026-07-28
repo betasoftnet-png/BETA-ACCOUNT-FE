@@ -267,25 +267,25 @@ function App() {
               <span>Personal info</span>
             </button>
             <button 
-              className={`nav-item ${activeTab === 'emails' ? 'active' : ''}`}
-              onClick={() => setActiveTab('emails')}
+              className={`nav-item ${activeTab === 'billing' ? 'active' : ''}`}
+              onClick={() => setActiveTab('billing')}
             >
-              <Mail size={20} />
-              <span>Emails & Identities</span>
+              <CreditCard size={20} />
+              <span>Payment & subscription</span>
             </button>
             <button 
-              className={`nav-item ${activeTab === 'privacy' ? 'active' : ''}`}
-              onClick={() => setActiveTab('privacy')}
+              className={`nav-item ${activeTab === 'storage' ? 'active' : ''}`}
+              onClick={() => setActiveTab('storage')}
             >
-              <Shield size={20} />
-              <span>Data & privacy</span>
+              <HardDrive size={20} />
+              <span>Account storage</span>
             </button>
             <button 
-              className={`nav-item ${activeTab === 'security' ? 'active' : ''}`}
-              onClick={() => setActiveTab('security')}
+              className="nav-item"
+              onClick={() => window.location.href = 'https://b2auth.com/'}
             >
               <ShieldCheck size={20} />
-              <span>Security</span>
+              <span>B2Auth</span>
             </button>
           </div>
 
@@ -380,7 +380,7 @@ function App() {
                         <span className="storage-label">{formatStorage(user.storageUsed)} of {formatStorage(user.storageLimit)} used</span>
                       </div>
                     </div>
-                    <div className="card-footer-link">
+                    <div className="card-footer-link" onClick={() => setActiveTab('storage')}>
                       Manage storage
                     </div>
                   </div>
@@ -647,6 +647,194 @@ function App() {
                       </div>
                       <div className="item-action">
                         <ChevronRight size={20} color="var(--text-muted)" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'billing' && (
+                <motion.div 
+                  key="billing"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="content-card mb-24">
+                    <h2>Payment & subscription</h2>
+                    <p className="card-desc">Manage your payment methods, billing address, and subscription settings.</p>
+                    
+                    <div className="billing-grid">
+                      <div className="info-block">
+                        <label>CURRENT PLAN</label>
+                        <div className="value" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <span className="type-badge-elite">{user.accountType || 'Free'} Account</span>
+                          <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            {user.accountType === 'Elite' ? '$9.99 / month' : 'Free access'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="info-block">
+                        <label>PAYMENT METHOD</label>
+                        <div className="value">
+                          <div className="payment-card-visual">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div className="payment-card-chip"></div>
+                              <span className="payment-card-logo">Visa</span>
+                            </div>
+                            <div className="payment-card-number">•••• •••• •••• 8842</div>
+                            <div className="payment-card-footer">
+                              <div>
+                                <div style={{ fontSize: '9px', opacity: 0.8 }}>CARDHOLDER</div>
+                                <div className="payment-card-holder">{user.firstName} {user.lastName}</div>
+                              </div>
+                              <div>
+                                <div style={{ fontSize: '9px', opacity: 0.8 }}>EXPIRES</div>
+                                <div className="payment-card-expiry">12/29</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="content-card">
+                    <h2>Billing History</h2>
+                    <p className="card-desc">View and download invoices for your past transactions.</p>
+                    
+                    <div className="billing-table-wrapper">
+                      <table className="billing-table">
+                        <thead>
+                          <tr>
+                            <th>DATE</th>
+                            <th>DESCRIPTION</th>
+                            <th>AMOUNT</th>
+                            <th>STATUS</th>
+                            <th>INVOICE</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>July 28, 2026</td>
+                            <td>BNX Account Storage Plan - 50GB</td>
+                            <td>$1.99</td>
+                            <td><span className="badge-status-paid">Paid</span></td>
+                            <td><span className="download-link">Download PDF</span></td>
+                          </tr>
+                          <tr>
+                            <td>June 28, 2026</td>
+                            <td>BNX Account Storage Plan - 50GB</td>
+                            <td>$1.99</td>
+                            <td><span className="badge-status-paid">Paid</span></td>
+                            <td><span className="download-link">Download PDF</span></td>
+                          </tr>
+                          <tr>
+                            <td>May 28, 2026</td>
+                            <td>BNX Account Storage Plan - 50GB</td>
+                            <td>$1.99</td>
+                            <td><span className="badge-status-paid">Paid</span></td>
+                            <td><span className="download-link">Download PDF</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'storage' && (
+                <motion.div 
+                  key="storage"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="content-card mb-24">
+                    <h2>Account storage</h2>
+                    <p className="card-desc">Your account storage is shared across BNX services like BNX Mail and Drive.</p>
+                    
+                    <div className="storage-detail-grid">
+                      <div>
+                        <div className="storage-status" style={{ marginTop: 0 }}>
+                          <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px' }}>Usage details</h3>
+                          <div className="progress-bar" style={{ height: '12px', borderRadius: '6px' }}>
+                            <div className="progress-fill" style={{ width: `${storagePercentage}%`, background: 'var(--primary)' }}></div>
+                          </div>
+                          <span className="storage-label" style={{ fontSize: '14px', fontWeight: '500' }}>
+                            {formatStorage(user.storageUsed)} of {formatStorage(user.storageLimit)} used ({storagePercentage.toFixed(1)}%)
+                          </span>
+                        </div>
+
+                        <div className="storage-breakdown-list">
+                          <div className="storage-breakdown-item">
+                            <div className="storage-color-dot mail"></div>
+                            <span className="storage-item-name">BNX Mail</span>
+                            <span className="storage-item-val">{formatStorage(user.storageUsed * 0.4)}</span>
+                          </div>
+                          <div className="storage-breakdown-item">
+                            <div className="storage-color-dot drive"></div>
+                            <span className="storage-item-name">BNX Drive</span>
+                            <span className="storage-item-val">{formatStorage(user.storageUsed * 0.5)}</span>
+                          </div>
+                          <div className="storage-breakdown-item">
+                            <div className="storage-color-dot system"></div>
+                            <span className="storage-item-name">System & Backups</span>
+                            <span className="storage-item-val">{formatStorage(user.storageUsed * 0.1)}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '24px', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-soft)' }}>
+                        <HardDrive size={48} color="var(--primary)" style={{ marginBottom: '16px' }} />
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>Need more space?</h3>
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '16px' }}>
+                          Upgrade your storage plan to get more space for your emails, files, and backups.
+                        </p>
+                        <button className="setup-btn" onClick={() => alert('Storage upgrade flow coming soon!')}>Get more storage</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="content-card">
+                    <h2>Upgrade Storage Plans</h2>
+                    <p className="card-desc">Choose a plan that fits your storage and feature requirements.</p>
+                    
+                    <div className="upgrade-plans-grid">
+                      <div className="plan-card">
+                        <div className="plan-title">Basic Storage</div>
+                        <div className="plan-price">$1.99<span>/mo</span></div>
+                        <ul className="plan-features">
+                          <li>50 GB total storage</li>
+                          <li>Standard support</li>
+                          <li>Ad-free Mail</li>
+                        </ul>
+                        <button className="plan-btn">Choose plan</button>
+                      </div>
+                      
+                      <div className="plan-card featured">
+                        <div className="plan-title">Standard</div>
+                        <div className="plan-price">$2.99<span>/mo</span></div>
+                        <ul className="plan-features">
+                          <li>200 GB total storage</li>
+                          <li>Priority support</li>
+                          <li>Ad-free Mail & Drive</li>
+                          <li>Advanced security tools</li>
+                        </ul>
+                        <button className="plan-btn">Upgrade</button>
+                      </div>
+                      
+                      <div className="plan-card">
+                        <div className="plan-title">Premium</div>
+                        <div className="plan-price">$9.99<span>/mo</span></div>
+                        <ul className="plan-features">
+                          <li>2 TB total storage</li>
+                          <li>24/7 Phone & Email support</li>
+                          <li>Full Suite premium access</li>
+                          <li>Custom domain support</li>
+                        </ul>
+                        <button className="plan-btn">Choose plan</button>
                       </div>
                     </div>
                   </div>
