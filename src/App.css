@@ -684,18 +684,95 @@ body {
   }
 }
 
-@media (max-width: 600px) {
-  .info-block {
-    grid-template-columns: 1fr;
-    gap: 4px;
+@media (max-width: 768px) {
+  .account-top-nav {
+    padding: 0 16px;
   }
   
+  .account-sidebar {
+    width: 100%;
+    height: 64px;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    padding: 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    z-index: 1000;
+    border-top: 1px solid var(--border-soft);
+    border-right: none;
+  }
+  
+  .sidebar-brand {
+    display: none;
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    margin: 0;
+  }
+  
+  .account-main {
+    margin-left: 0;
+    margin-bottom: 64px;
+    padding: 16px;
+  }
+
+  .account-header {
+    padding: 16px;
+  }
+
   .header-titles h1 {
     font-size: 24px;
   }
   
+  .dashboard-grid, .billing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .info-block {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  
+  .info-block.clickable {
+    padding: 12px 16px;
+    margin: 0 -16px;
+  }
+  
   .content-card {
     padding: 16px;
+  }
+
+  .user-brief {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .header-titles h1 {
+    font-size: 20px;
+  }
+  
+  .header-titles p {
+    font-size: 13px;
+  }
+
+  .avatar-large {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: 24px 16px;
+    margin: 16px;
   }
 }
 
