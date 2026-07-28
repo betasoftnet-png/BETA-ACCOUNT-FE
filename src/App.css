@@ -652,15 +652,31 @@ body {
 /* Responsive */
 @media (max-width: 900px) {
   .account-sidebar {
-    width: 64px;
+    width: 72px;
+    padding: 12px 0;
+    align-items: center;
   }
   
   .brand-name, .nav-item span, .logout-btn span {
     display: none;
   }
+
+  .nav-item, .logout-btn {
+    padding: 12px;
+    margin: 0;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+  }
+  
+  .sidebar-brand {
+    justify-content: center;
+    width: 100%;
+  }
   
   .account-main {
-    margin-left: 64px;
+    margin-left: 72px;
   }
   
   .dashboard-grid {
