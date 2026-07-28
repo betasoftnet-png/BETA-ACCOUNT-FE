@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-  User, ShieldCheck, Key, Bell, CreditCard, 
-  ChevronRight, LogOut, Shield, Smartphone, 
-  CheckCircle2, AlertCircle, Copy, RefreshCw,
-  Mail, Info, Globe, Lock, Eye, Trash2, HelpCircle, Grid,
-  Home, HardDrive, Database, Settings, ExternalLink
+  User, ShieldCheck, CreditCard, LogOut, CheckCircle2, AlertCircle, RefreshCw, 
+  HelpCircle, Grid, Home, HardDrive, ChevronRight, Key, Smartphone, Trash2, Globe, Mail, Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import './App.css';
+
+// Import modular components
+import HomeTab from './components/HomeTab';
+import ProfileTab from './components/ProfileTab';
+import BillingTab from './components/BillingTab';
+import StorageTab from './components/StorageTab';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
@@ -24,7 +27,6 @@ function App() {
   const [twoFactorSecret, setTwoFactorSecret] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [mailboxes, setMailboxes] = useState([]);
 
   useEffect(() => {
@@ -59,6 +61,7 @@ function App() {
       }
     }
   };
+
   const fetchEmails = async (token) => {
     try {
       const res = await axios.get(`${API_BASE}/emails/list`, {
@@ -76,7 +79,6 @@ function App() {
     setLoading(true);
     try {
       const token = localStorage.getItem('bnx_accessToken');
-      // Using the verification flow to securely update primary email
       const res = await axios.post(
         `${API_BASE}/verification/initiate/${emailId}`,
         {},
@@ -123,7 +125,6 @@ function App() {
         setUser({ ...user, twoFactorEnabled: true });
       }
     } catch (err) {
-      // If simple enable fails (no secret), then initiate full setup
       handleInitiate2FA();
     } finally {
       setLoading(false);
@@ -165,52 +166,6 @@ function App() {
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to disable 2FA' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('bnx_accessToken');
-      const res = await axios.post(`${API_BASE}/users/profile-picture`, formData, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      if (res.data.success) {
-        setMessage({ type: 'success', text: 'Profile picture updated successfully!' });
-        setUser({ ...user, profilePicture: res.data.data.profilePicture });
-      }
-    } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to upload photo' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAvatarDelete = async () => {
-    if (!window.confirm("Are you sure you want to remove your profile picture?")) return;
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('bnx_accessToken');
-      const res = await axios.delete(`${API_BASE}/users/profile-picture`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        setMessage({ type: 'success', text: 'Profile picture removed.' });
-        setUser({ ...user, profilePicture: null });
-      }
-    } catch (err) {
-      setMessage({ type: 'error', text: 'Failed to remove photo' });
     } finally {
       setLoading(false);
     }
@@ -320,71 +275,12 @@ function App() {
           <section className="content-area">
             <AnimatePresence mode="wait">
               {activeTab === 'home' && (
-                <motion.div 
-                  key="home"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="dashboard-grid"
-                >
-                  <div className="summary-card">
-                    <div className="card-body">
-                      <div className="card-icon-header"><Mail color="#1a73e8" size={40} /></div>
-                      <h3>Emails & Identities</h3>
-                      <p>Manage your primary and secondary email addresses associated with this account</p>
-                      <div className="primary-email-preview">
-                        <CheckCircle2 size={16} color="#188038" />
-                        <span>{user.email}</span>
-                      </div>
-                    </div>
-                    <div className="card-footer-link" onClick={() => setActiveTab('emails')}>
-                      Manage your emails
-                    </div>
-                  </div>
-
-                  <div className="summary-card">
-                    <div className="card-body">
-                      <div className="card-icon-header"><Shield color="#1a73e8" size={40} /></div>
-                      <h3>Privacy & personalization</h3>
-                      <p>See the data in your BNX Account and choose what activity is saved to personalize your BNX experience</p>
-                    </div>
-                    <div className="card-footer-link" onClick={() => setActiveTab('privacy')}>
-                      Manage your data & privacy
-                    </div>
-                  </div>
-
-                  <div className="summary-card">
-                    <div className="card-body">
-                      <div className="card-icon-header"><ShieldCheck color="#1a73e8" size={40} /></div>
-                      <h3>Account & Security</h3>
-                      <p>Security checkup and recommendations for your {user.accountType} account.</p>
-                      <div className="account-tag-elite">
-                        <Globe size={14} />
-                        <span>{user.accountType} Account</span>
-                      </div>
-                    </div>
-                    <div className="card-footer-link" onClick={() => setActiveTab('security')}>
-                      Protect your account
-                    </div>
-                  </div>
-
-                  <div className="summary-card">
-                    <div className="card-body">
-                      <div className="card-icon-header"><HardDrive color="#1a73e8" size={40} /></div>
-                      <h3>Account storage</h3>
-                      <p>Your account storage is shared across BNX services, like BNX Mail and Drive</p>
-                      <div className="storage-status">
-                        <div className="progress-bar">
-                          <div className="progress-fill" style={{ width: `${storagePercentage}%` }}></div>
-                        </div>
-                        <span className="storage-label">{formatStorage(user.storageUsed)} of {formatStorage(user.storageLimit)} used</span>
-                      </div>
-                    </div>
-                    <div className="card-footer-link" onClick={() => setActiveTab('storage')}>
-                      Manage storage
-                    </div>
-                  </div>
-                </motion.div>
+                <HomeTab 
+                  user={user} 
+                  storagePercentage={storagePercentage} 
+                  formatStorage={formatStorage} 
+                  setActiveTab={setActiveTab} 
+                />
               )}
 
               {activeTab === 'emails' && (
@@ -436,122 +332,14 @@ function App() {
               )}
 
               {activeTab === 'profile' && (
-                <motion.div 
-                  key="profile"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  <div className="content-card mb-24">
-                    <h2>Basic info</h2>
-                    <p className="card-desc">Some info may be visible to other people using BNX services. <a href="#">Learn more</a></p>
-                    
-                    <div className="info-grid">
-                      <div className="info-block">
-                        <label>PHOTO</label>
-                        <div className="value" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div className="avatar-small" style={{ overflow: 'hidden' }}>
-                            <img 
-                              src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
-                              alt={user.firstName}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          </div>
-                          <div>
-                            <input 
-                              type="file" 
-                              id="avatar-upload" 
-                              accept="image/*" 
-                              style={{ display: 'none' }} 
-                              onChange={handleAvatarUpload}
-                            />
-                            <label htmlFor="avatar-upload" className="setup-btn" style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '13px' }}>
-                              Change photo
-                            </label>
-                            {user.profilePicture && (
-                              <button 
-                                onClick={handleAvatarDelete}
-                                className="setup-btn" 
-                                style={{ marginLeft: '8px', color: '#d93025', borderColor: '#dadce0', padding: '6px 12px', fontSize: '13px' }}
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="info-block">
-                        <label>FULL NAME</label>
-                        <div className="value">{user.fullName || (user.firstName + ' ' + user.lastName)}</div>
-                      </div>
-                      <div className="info-block">
-                        <label>USERNAME</label>
-                        <div className="value">{user.username}</div>
-                      </div>
-                      <div className="info-block">
-                        <label>ACCOUNT ID</label>
-                        <div className="value">#{user.id}</div>
-                      </div>
-                      <div className="info-block">
-                        <label>BIRTHDAY</label>
-                        <div className="value">{user.dob ? new Date(user.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Not set'}</div>
-                      </div>
-                      <div className="info-block">
-                        <label>ACCOUNT TYPE</label>
-                        <div className="value">
-                          <span className="type-badge-elite">{user.accountType}</span>
-                        </div>
-                      </div>
-                      <div className="info-block">
-                        <label>JOINED ON</label>
-                        <div className="value">{user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A'}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="content-card mb-24">
-                    <h2>Contact info</h2>
-                    <p className="card-desc">Your contact information used for communication and recovery.</p>
-                    <div className="info-grid">
-                      <div className="info-block">
-                        <label>PRIMARY EMAIL</label>
-                        <div className="value-with-badge">
-                          <span>{user.email}</span>
-                          {user.isPrimary && <span className="mini-badge primary">Primary</span>}
-                        </div>
-                      </div>
-                      <div className="info-block">
-                        <label>RECOVERY EMAIL</label>
-                        <div className="value">{user.recoveryEmail || 'None added'}</div>
-                      </div>
-                      <div className="info-block">
-                        <label>PHONE NUMBER</label>
-                        <div className="value">{user.phoneNumber || 'None added'}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="content-card mb-24">
-                    <h2>Other info and preferences</h2>
-                    <p className="card-desc">Options and settings for your BNX services</p>
-                    <div className="info-grid">
-                      <div className="info-block clickable">
-                        <label>LANGUAGE</label>
-                        <div className="value-with-action">
-                          <span>English (United States)</span>
-                          <ChevronRight size={18} color="var(--text-muted)" />
-                        </div>
-                      </div>
-                      <div className="info-block clickable">
-                        <label>ACCESSIBILITY</label>
-                        <div className="value-with-action">
-                          <span>High contrast off</span>
-                          <ChevronRight size={18} color="var(--text-muted)" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                <ProfileTab 
+                  user={user} 
+                  setUser={setUser} 
+                  loading={loading} 
+                  setLoading={setLoading} 
+                  setMessage={setMessage} 
+                  API_BASE={API_BASE} 
+                />
               )}
 
               {activeTab === 'security' && (
@@ -654,191 +442,15 @@ function App() {
               )}
 
               {activeTab === 'billing' && (
-                <motion.div 
-                  key="billing"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  <div className="content-card mb-24">
-                    <h2>Payment & subscription</h2>
-                    <p className="card-desc">Manage your payment methods, billing address, and subscription settings.</p>
-                    
-                    <div className="billing-grid">
-                      <div className="info-block">
-                        <label>CURRENT PLAN</label>
-                        <div className="value" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          <span className="type-badge-elite">{user.accountType || 'Free'} Account</span>
-                          <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                            {user.accountType === 'Elite' ? '$9.99 / month' : 'Free access'}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="info-block">
-                        <label>PAYMENT METHOD</label>
-                        <div className="value">
-                          <div className="payment-card-visual">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <div className="payment-card-chip"></div>
-                              <span className="payment-card-logo">Visa</span>
-                            </div>
-                            <div className="payment-card-number">•••• •••• •••• 8842</div>
-                            <div className="payment-card-footer">
-                              <div>
-                                <div style={{ fontSize: '9px', opacity: 0.8 }}>CARDHOLDER</div>
-                                <div className="payment-card-holder">{user.firstName} {user.lastName}</div>
-                              </div>
-                              <div>
-                                <div style={{ fontSize: '9px', opacity: 0.8 }}>EXPIRES</div>
-                                <div className="payment-card-expiry">12/29</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="content-card">
-                    <h2>Billing History</h2>
-                    <p className="card-desc">View and download invoices for your past transactions.</p>
-                    
-                    <div className="billing-table-wrapper">
-                      <table className="billing-table">
-                        <thead>
-                          <tr>
-                            <th>DATE</th>
-                            <th>DESCRIPTION</th>
-                            <th>AMOUNT</th>
-                            <th>STATUS</th>
-                            <th>INVOICE</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>July 28, 2026</td>
-                            <td>BNX Account Storage Plan - 50GB</td>
-                            <td>$1.99</td>
-                            <td><span className="badge-status-paid">Paid</span></td>
-                            <td><span className="download-link">Download PDF</span></td>
-                          </tr>
-                          <tr>
-                            <td>June 28, 2026</td>
-                            <td>BNX Account Storage Plan - 50GB</td>
-                            <td>$1.99</td>
-                            <td><span className="badge-status-paid">Paid</span></td>
-                            <td><span className="download-link">Download PDF</span></td>
-                          </tr>
-                          <tr>
-                            <td>May 28, 2026</td>
-                            <td>BNX Account Storage Plan - 50GB</td>
-                            <td>$1.99</td>
-                            <td><span className="badge-status-paid">Paid</span></td>
-                            <td><span className="download-link">Download PDF</span></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </motion.div>
+                <BillingTab user={user} />
               )}
 
               {activeTab === 'storage' && (
-                <motion.div 
-                  key="storage"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  <div className="content-card mb-24">
-                    <h2>Account storage</h2>
-                    <p className="card-desc">Your account storage is shared across BNX services like BNX Mail and Drive.</p>
-                    
-                    <div className="storage-detail-grid">
-                      <div>
-                        <div className="storage-status" style={{ marginTop: 0 }}>
-                          <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px' }}>Usage details</h3>
-                          <div className="progress-bar" style={{ height: '12px', borderRadius: '6px' }}>
-                            <div className="progress-fill" style={{ width: `${storagePercentage}%`, background: 'var(--primary)' }}></div>
-                          </div>
-                          <span className="storage-label" style={{ fontSize: '14px', fontWeight: '500' }}>
-                            {formatStorage(user.storageUsed)} of {formatStorage(user.storageLimit)} used ({storagePercentage.toFixed(1)}%)
-                          </span>
-                        </div>
-
-                        <div className="storage-breakdown-list">
-                          <div className="storage-breakdown-item">
-                            <div className="storage-color-dot mail"></div>
-                            <span className="storage-item-name">BNX Mail</span>
-                            <span className="storage-item-val">{formatStorage(user.storageUsed * 0.4)}</span>
-                          </div>
-                          <div className="storage-breakdown-item">
-                            <div className="storage-color-dot drive"></div>
-                            <span className="storage-item-name">BNX Drive</span>
-                            <span className="storage-item-val">{formatStorage(user.storageUsed * 0.5)}</span>
-                          </div>
-                          <div className="storage-breakdown-item">
-                            <div className="storage-color-dot system"></div>
-                            <span className="storage-item-name">System & Backups</span>
-                            <span className="storage-item-val">{formatStorage(user.storageUsed * 0.1)}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '24px', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-soft)' }}>
-                        <HardDrive size={48} color="var(--primary)" style={{ marginBottom: '16px' }} />
-                        <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>Need more space?</h3>
-                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '16px' }}>
-                          Upgrade your storage plan to get more space for your emails, files, and backups.
-                        </p>
-                        <button className="setup-btn" onClick={() => alert('Storage upgrade flow coming soon!')}>Get more storage</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="content-card">
-                    <h2>Upgrade Storage Plans</h2>
-                    <p className="card-desc">Choose a plan that fits your storage and feature requirements.</p>
-                    
-                    <div className="upgrade-plans-grid">
-                      <div className="plan-card">
-                        <div className="plan-title">Basic Storage</div>
-                        <div className="plan-price">$1.99<span>/mo</span></div>
-                        <ul className="plan-features">
-                          <li>50 GB total storage</li>
-                          <li>Standard support</li>
-                          <li>Ad-free Mail</li>
-                        </ul>
-                        <button className="plan-btn">Choose plan</button>
-                      </div>
-                      
-                      <div className="plan-card featured">
-                        <div className="plan-title">Standard</div>
-                        <div className="plan-price">$2.99<span>/mo</span></div>
-                        <ul className="plan-features">
-                          <li>200 GB total storage</li>
-                          <li>Priority support</li>
-                          <li>Ad-free Mail & Drive</li>
-                          <li>Advanced security tools</li>
-                        </ul>
-                        <button className="plan-btn">Upgrade</button>
-                      </div>
-                      
-                      <div className="plan-card">
-                        <div className="plan-title">Premium</div>
-                        <div className="plan-price">$9.99<span>/mo</span></div>
-                        <ul className="plan-features">
-                          <li>2 TB total storage</li>
-                          <li>24/7 Phone & Email support</li>
-                          <li>Full Suite premium access</li>
-                          <li>Custom domain support</li>
-                        </ul>
-                        <button className="plan-btn">Choose plan</button>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                <StorageTab 
+                  user={user} 
+                  storagePercentage={storagePercentage} 
+                  formatStorage={formatStorage} 
+                />
               )}
             </AnimatePresence>
           </section>
