@@ -275,7 +275,7 @@ function App() {
                 />
               </div>
               <div className="header-titles">
-                <h1>Welcome, {user.firstName}</h1>
+                <h1 style={{textTransform:'capitalize'}}>Welcome, {user.displayName || user.firstName}</h1>
                 <p>Manage your info, privacy, and security to make B2Auth work better for you.</p>
               </div>
             </div>
