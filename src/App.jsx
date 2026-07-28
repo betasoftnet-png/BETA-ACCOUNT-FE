@@ -333,8 +333,7 @@ function App() {
                     </div>
 
                     <div className="info-box-light" style={{ marginTop: '24px' }}>
-                      <Info size={18} />
-                      <p>To add a new email address, you must register it through the BNX Mail application.</p>
+                      <Info size={18} /><p>To add a new email address, you must register it through the BNX Mail application.</p>
                     </div>
                   </div>
                 </motion.div>
