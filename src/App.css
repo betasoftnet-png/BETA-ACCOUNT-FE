@@ -1082,3 +1082,104 @@ body {
   background: var(--primary-hover);
 }
 
+/* Premium Profile Tab Styles */
+.info-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.info-label-value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label-value label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.info-label-value .value {
+  font-size: 14px;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+/* Clickable items inside ProfileTab */
+.info-block.clickable {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin: 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+.info-block.clickable:hover {
+  background: var(--bg-secondary);
+  transform: translateX(4px);
+}
+
+.info-block.clickable:hover .info-icon-wrapper {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+.info-block.clickable .chevron-icon {
+  margin-left: auto;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.info-block.clickable:hover .chevron-icon {
+  opacity: 1;
+  transform: translateX(2px);
+  color: var(--primary);
+}
+
+/* Modern material input styling */
+.profile-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.profile-input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.profile-input-field {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  outline: none;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.profile-input-field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+

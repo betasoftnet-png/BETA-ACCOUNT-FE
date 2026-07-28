@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
+import { 
+  ChevronRight, User, Calendar, Smile, Mail, Phone, 
+  MapPin, Briefcase, AlignLeft, Camera, Trash2 
+} from 'lucide-react';
 
 function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }) {
   const [editModal, setEditModal] = useState({ show: false, section: '' });
@@ -112,179 +115,204 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
       >
-        <div className="content-card mb-24">
+        <div className="content-card mb-24" style={{ padding: '32px' }}>
           <h2>Basic info</h2>
           <p className="card-desc">Some info may be visible to other people using BNX services. Click any row to update.</p>
           
-          <div className="info-grid">
-            <div className="info-block">
-              <label>PHOTO</label>
-              <div className="value" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div className="avatar-small" style={{ overflow: 'hidden' }}>
-                  <img 
-                    src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
-                    alt={user.firstName}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
-                <div>
-                  <input 
-                    type="file" 
-                    id="avatar-upload" 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
-                    onChange={handleAvatarUpload}
-                  />
-                  <label htmlFor="avatar-upload" className="setup-btn" style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '13px' }}>
-                    Change photo
-                  </label>
-                  {user.profilePicture && (
-                    <button 
-                      onClick={handleAvatarDelete}
-                      className="setup-btn" 
-                      style={{ marginLeft: '8px', color: '#d93025', borderColor: '#dadce0', padding: '6px 12px', fontSize: '13px' }}
-                    >
-                      Remove
-                    </button>
-                  )}
+          <div className="info-grid" style={{ marginTop: '16px' }}>
+            <div className="info-block" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '20px 24px' }}>
+              <div className="info-icon-wrapper">
+                <Camera size={18} />
+              </div>
+              <div className="info-label-value" style={{ flex: 1 }}>
+                <label>PHOTO</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px' }}>
+                  <div className="avatar-small" style={{ overflow: 'hidden', width: '56px', height: '56px', borderRadius: '50%', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                    <img 
+                      src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
+                      alt={user.firstName}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input 
+                      type="file" 
+                      id="avatar-upload" 
+                      accept="image/*" 
+                      style={{ display: 'none' }} 
+                      onChange={handleAvatarUpload}
+                    />
+                    <label htmlFor="avatar-upload" className="setup-btn" style={{ cursor: 'pointer', padding: '8px 16px', fontSize: '13px', borderRadius: '6px' }}>
+                      Change photo
+                    </label>
+                    {user.profilePicture && (
+                      <button 
+                        onClick={handleAvatarDelete}
+                        className="setup-btn" 
+                        style={{ color: '#d93025', borderColor: '#dadce0', padding: '8px 16px', fontSize: '13px', borderRadius: '6px' }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
             
             <div className="info-block clickable" onClick={() => openEditModal('basic')}>
-              <label>NAME</label>
-              <div className="value-with-action">
-                <span>{user.firstName} {user.lastName}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <User size={18} />
               </div>
+              <div className="info-label-value">
+                <label>NAME</label>
+                <div className="value">{user.firstName} {user.lastName}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('basic')}>
-              <label>NICKNAME</label>
-              <div className="value-with-action">
-                <span>{user.nickname || 'Not set'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <User size={18} />
               </div>
+              <div className="info-label-value">
+                <label>NICKNAME</label>
+                <div className="value">{user.nickname || 'Not set'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('basic')}>
-              <label>DISPLAY NAME</label>
-              <div className="value-with-action">
-                <span>{user.displayName || 'Not set'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <User size={18} />
               </div>
+              <div className="info-label-value">
+                <label>DISPLAY NAME</label>
+                <div className="value">{user.displayName || 'Not set'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('basic')}>
-              <label>BIRTHDAY</label>
-              <div className="value-with-action">
-                <span>{user.dob ? new Date(user.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Not set'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <Calendar size={18} />
               </div>
+              <div className="info-label-value">
+                <label>BIRTHDAY</label>
+                <div className="value">
+                  {user.dob ? new Date(user.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Not set'}
+                </div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('basic')}>
-              <label>GENDER</label>
-              <div className="value-with-action">
-                <span>{user.gender || 'Rather not say'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <Smile size={18} />
               </div>
-            </div>
-
-            <div className="info-block">
-              <label>USERNAME</label>
-              <div className="value">{user.username}</div>
-            </div>
-
-            <div className="info-block">
-              <label>ACCOUNT ID</label>
-              <div className="value">#{user.id}</div>
-            </div>
-
-            <div className="info-block">
-              <label>ACCOUNT TYPE</label>
-              <div className="value">
-                <span className="type-badge-elite">{user.accountType}</span>
+              <div className="info-label-value">
+                <label>GENDER</label>
+                <div className="value">{user.gender || 'Rather not say'}</div>
               </div>
-            </div>
-
-            <div className="info-block">
-              <label>JOINED ON</label>
-              <div className="value">{user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A'}</div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
           </div>
         </div>
 
-        <div className="content-card mb-24">
+        <div className="content-card mb-24" style={{ padding: '32px' }}>
           <h2>Contact info</h2>
           <p className="card-desc">Your contact information used for communication and recovery. Click to edit.</p>
-          <div className="info-grid">
-            <div className="info-block">
-              <label>PRIMARY EMAIL</label>
-              <div className="value-with-badge">
-                <span>{user.email}</span>
-                {user.isPrimary && <span className="mini-badge primary">Primary</span>}
+          <div className="info-grid" style={{ marginTop: '16px' }}>
+            <div className="info-block" style={{ padding: '16px 24px' }}>
+              <div className="info-icon-wrapper">
+                <Mail size={18} />
+              </div>
+              <div className="info-label-value">
+                <label>PRIMARY EMAIL</label>
+                <div className="value-with-badge" style={{ gap: '8px' }}>
+                  <span>{user.email}</span>
+                  {user.isPrimary && <span className="mini-badge primary">Primary</span>}
+                </div>
               </div>
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('contact')}>
-              <label>RECOVERY EMAIL</label>
-              <div className="value-with-action">
-                <span>{user.recoveryEmail || 'None added'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <Mail size={18} />
               </div>
+              <div className="info-label-value">
+                <label>RECOVERY EMAIL</label>
+                <div className="value">{user.recoveryEmail || 'None added'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('contact')}>
-              <label>PHONE NUMBER</label>
-              <div className="value-with-action">
-                <span>{user.phoneNumber || 'None added'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <Phone size={18} />
               </div>
+              <div className="info-label-value">
+                <label>PHONE NUMBER</label>
+                <div className="value">{user.phoneNumber || 'None added'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
           </div>
         </div>
 
-        <div className="content-card mb-24">
+        <div className="content-card mb-24" style={{ padding: '32px' }}>
           <h2>Addresses</h2>
           <p className="card-desc">Your physical addresses for billing and shipping. Click to edit.</p>
-          <div className="info-grid">
+          <div className="info-grid" style={{ marginTop: '16px' }}>
             <div className="info-block clickable" onClick={() => openEditModal('addresses')}>
-              <label>HOME ADDRESS</label>
-              <div className="value-with-action">
-                <span style={{ whiteSpace: 'pre-wrap' }}>{user.homeAddress || 'None added'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <MapPin size={18} />
               </div>
+              <div className="info-label-value">
+                <label>HOME ADDRESS</label>
+                <div className="value" style={{ whiteSpace: 'pre-wrap' }}>{user.homeAddress || 'None added'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('addresses')}>
-              <label>WORK ADDRESS</label>
-              <div className="value-with-action">
-                <span style={{ whiteSpace: 'pre-wrap' }}>{user.workAddress || 'None added'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <MapPin size={18} />
               </div>
+              <div className="info-label-value">
+                <label>WORK ADDRESS</label>
+                <div className="value" style={{ whiteSpace: 'pre-wrap' }}>{user.workAddress || 'None added'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
           </div>
         </div>
 
-        <div className="content-card mb-24">
+        <div className="content-card mb-24" style={{ padding: '32px' }}>
           <h2>About me</h2>
           <p className="card-desc">Your profile description and occupation. Click to edit.</p>
-          <div className="info-grid">
+          <div className="info-grid" style={{ marginTop: '16px' }}>
             <div className="info-block clickable" onClick={() => openEditModal('about')}>
-              <label>OCCUPATION</label>
-              <div className="value-with-action">
-                <span>{user.occupation || 'None added'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <Briefcase size={18} />
               </div>
+              <div className="info-label-value">
+                <label>OCCUPATION</label>
+                <div className="value">{user.occupation || 'None added'}</div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
 
             <div className="info-block clickable" onClick={() => openEditModal('about')}>
-              <label>BIO</label>
-              <div className="value-with-action">
-                <span style={{ whiteSpace: 'pre-wrap' }}>{user.bio || 'Write a brief description about yourself'}</span>
-                <ChevronRight size={18} color="var(--text-muted)" />
+              <div className="info-icon-wrapper">
+                <AlignLeft size={18} />
               </div>
+              <div className="info-label-value">
+                <label>BIO</label>
+                <div className="value" style={{ whiteSpace: 'pre-wrap' }}>
+                  {user.bio || 'Write a brief description about yourself'}
+                </div>
+              </div>
+              <ChevronRight size={18} className="chevron-icon" />
             </div>
           </div>
         </div>
@@ -292,70 +320,70 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
 
       {editModal.show && (
         <div className="setup-overlay">
-          <div className="setup-modal animate-scale-in" style={{ maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ marginBottom: '8px' }}>
+          <div className="setup-modal animate-scale-in" style={{ maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', borderRadius: '12px' }}>
+            <h3 style={{ marginBottom: '8px', fontSize: '20px', fontWeight: '500' }}>
               Edit {editModal.section === 'basic' ? 'Basic Info' : 
                     editModal.section === 'contact' ? 'Contact Info' : 
                     editModal.section === 'addresses' ? 'Addresses' : 'About Me'}
             </h3>
-            <p className="card-desc" style={{ marginBottom: '16px' }}>Update your personal details below.</p>
+            <p className="card-desc" style={{ marginBottom: '20px' }}>Update your personal details below.</p>
             
             <form onSubmit={handleSaveProfile}>
               {editModal.section === 'basic' && (
                 <>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>First Name</label>
+                  <div className="profile-input-group">
+                    <label>First Name</label>
                     <input 
                       type="text" 
+                      className="profile-input-field"
                       value={profileForm.firstName}
                       onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                       required
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Last Name</label>
+                  <div className="profile-input-group">
+                    <label>Last Name</label>
                     <input 
                       type="text" 
+                      className="profile-input-field"
                       value={profileForm.lastName}
                       onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                       required
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Nickname</label>
+                  <div className="profile-input-group">
+                    <label>Nickname</label>
                     <input 
                       type="text" 
+                      className="profile-input-field"
                       value={profileForm.nickname}
                       onChange={(e) => setProfileForm({ ...profileForm, nickname: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Display Name</label>
+                  <div className="profile-input-group">
+                    <label>Display Name</label>
                     <input 
                       type="text" 
+                      className="profile-input-field"
                       value={profileForm.displayName}
                       onChange={(e) => setProfileForm({ ...profileForm, displayName: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Birthday (YYYY-MM-DD)</label>
+                  <div className="profile-input-group">
+                    <label>Birthday</label>
                     <input 
                       type="date" 
+                      className="profile-input-field"
                       value={profileForm.dob}
                       onChange={(e) => setProfileForm({ ...profileForm, dob: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Gender</label>
+                  <div className="profile-input-group">
+                    <label>Gender</label>
                     <select 
+                      className="profile-input-field"
                       value={profileForm.gender}
                       onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
-                      style={{ width: '100%', padding: '12px', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '14px', margin: '4px 0 12px 0', outline: 'none' }}
                     >
                       <option value="">Rather not say</option>
                       <option value="Male">Male</option>
@@ -369,22 +397,22 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
 
               {editModal.section === 'contact' && (
                 <>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Recovery Email</label>
+                  <div className="profile-input-group">
+                    <label>Recovery Email</label>
                     <input 
                       type="email" 
+                      className="profile-input-field"
                       value={profileForm.recoveryEmail}
                       onChange={(e) => setProfileForm({ ...profileForm, recoveryEmail: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Phone Number</label>
+                  <div className="profile-input-group">
+                    <label>Phone Number</label>
                     <input 
                       type="text" 
+                      className="profile-input-field"
                       value={profileForm.phoneNumber}
                       onChange={(e) => setProfileForm({ ...profileForm, phoneNumber: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                     />
                   </div>
                 </>
@@ -392,22 +420,24 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
 
               {editModal.section === 'addresses' && (
                 <>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Home Address</label>
+                  <div className="profile-input-group">
+                    <label>Home Address</label>
                     <textarea 
+                      className="profile-input-field"
                       value={profileForm.homeAddress}
                       onChange={(e) => setProfileForm({ ...profileForm, homeAddress: e.target.value })}
                       rows="3"
-                      style={{ width: '100%', padding: '12px', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '14px', margin: '4px 0 12px 0', outline: 'none', resize: 'vertical' }}
+                      style={{ resize: 'vertical' }}
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Work Address</label>
+                  <div className="profile-input-group">
+                    <label>Work Address</label>
                     <textarea 
+                      className="profile-input-field"
                       value={profileForm.workAddress}
                       onChange={(e) => setProfileForm({ ...profileForm, workAddress: e.target.value })}
                       rows="3"
-                      style={{ width: '100%', padding: '12px', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '14px', margin: '4px 0 12px 0', outline: 'none', resize: 'vertical' }}
+                      style={{ resize: 'vertical' }}
                     />
                   </div>
                 </>
@@ -415,22 +445,23 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
 
               {editModal.section === 'about' && (
                 <>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Occupation</label>
+                  <div className="profile-input-group">
+                    <label>Occupation</label>
                     <input 
                       type="text" 
+                      className="profile-input-field"
                       value={profileForm.occupation}
                       onChange={(e) => setProfileForm({ ...profileForm, occupation: e.target.value })}
-                      style={{ padding: '8px', margin: '4px 0 12px 0' }}
                     />
                   </div>
-                  <div className="verify-step" style={{ marginBottom: '12px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600' }}>Bio</label>
+                  <div className="profile-input-group">
+                    <label>Bio</label>
                     <textarea 
+                      className="profile-input-field"
                       value={profileForm.bio}
                       onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
                       rows="4"
-                      style={{ width: '100%', padding: '12px', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '14px', margin: '4px 0 12px 0', outline: 'none', resize: 'vertical' }}
+                      style={{ resize: 'vertical' }}
                       placeholder="Tell us about yourself..."
                     />
                   </div>
@@ -441,13 +472,13 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
                 type="submit" 
                 className="verify-btn" 
                 disabled={loading}
-                style={{ marginTop: '16px' }}
+                style={{ marginTop: '24px', padding: '12px', borderRadius: '6px', fontSize: '15px' }}
               >
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>
             </form>
             
-            <button className="close-link" onClick={() => setEditModal({ show: false, section: '' })}>Cancel</button>
+            <button className="close-link" onClick={() => setEditModal({ show: false, section: '' })} style={{ marginTop: '20px' }}>Cancel</button>
           </div>
         </div>
       )}
