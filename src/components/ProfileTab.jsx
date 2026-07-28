@@ -475,7 +475,7 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
         <h2>Contact info</h2>
         <p className="card-desc">Your contact information used for communication and recovery. Click to edit.</p>
         <div className="info-grid" style={{ marginTop: '16px' }}>
-          <div className="info-block" style={{ padding: '16px 24px' }}>
+          <div className="info-block" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 24px' }}>
             <div className="info-icon-wrapper">
               <Mail size={18} />
             </div>

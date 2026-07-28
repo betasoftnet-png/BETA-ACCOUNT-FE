@@ -45,6 +45,15 @@ function App() {
     fetchProfile(token);
   }, []);
 
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        setMessage({ type: '', text: '' });
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const fetchProfile = async (token) => {
     try {
       const res = await axios.get(`${API_BASE}/users/me`, {
