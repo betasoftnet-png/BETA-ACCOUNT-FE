@@ -74,15 +74,15 @@ function App() {
 
   const fetchStorage = async (token) => {
     try {
-      const baseUrl = API_BASE.replace(/\/v1\/?$/, '');
-      const res = await axios.get(`${baseUrl}/mail/storage-quota`, {
+      const res = await axios.get(`${API_BASE}/mail/storage-quota`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
         setUser(prevUser => ({
           ...prevUser,
           storageUsed: res.data.data.storageUsed,
-          storageLimit: res.data.data.storageLimit
+          storageLimit: res.data.data.storageLimit,
+          storagePercentage: res.data.data.storagePercentage
         }));
       }
     } catch (err) {
@@ -207,7 +207,7 @@ function App() {
     return gb.toFixed(1) + ' GB';
   };
 
-  const storagePercentage = user.storageLimit > 0 ? (user.storageUsed / user.storageLimit) * 100 : 0;
+  const storagePercentage = user.storagePercentage || 0;
 
   return (
     <div className="account-app-container">
