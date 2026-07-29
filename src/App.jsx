@@ -62,12 +62,31 @@ function App() {
       if (res.data.success) {
         setUser(res.data.data);
         fetchEmails(token);
+        fetchStorage(token);
       }
     } catch (err) {
       console.error("Failed to fetch profile", err);
       if (err.response?.status === 401) {
         window.location.href = 'https://b2auth.com/';
       }
+    }
+  };
+
+  const fetchStorage = async (token) => {
+    try {
+      const baseUrl = API_BASE.replace(/\/v1\/?$/, '');
+      const res = await axios.get(`${baseUrl}/mail/storage-quota`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setUser(prevUser => ({
+          ...prevUser,
+          storageUsed: res.data.data.storageUsed,
+          storageLimit: res.data.data.storageLimit
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch storage quota", err);
     }
   };
 
