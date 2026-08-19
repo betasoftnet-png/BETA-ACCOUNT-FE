@@ -64,7 +64,11 @@ function HomeTab({ user, storagePercentage, formatStorage, setActiveTab }) {
             <span className="storage-label">{formatStorage(user.storageUsed)} of {formatStorage(user.storageLimit)} used</span>
           </div>
         </div>
-        <div className="card-footer-link" onClick={() => setActiveTab('storage')}>
+        <div className="card-footer-link" onClick={() => {
+          const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          const mailUrl = isLocal ? 'http://localhost:3000/storage-management' : 'https://www.bnxmail.com/storage-management';
+          window.location.href = mailUrl;
+        }}>
           Manage storage
         </div>
       </div>

@@ -259,8 +259,12 @@ function App() {
               <span>Payment & subscription</span>
             </button>
             <button 
-              className={`nav-item ${activeTab === 'storage' ? 'active' : ''}`}
-              onClick={() => setActiveTab('storage')}
+              className="nav-item"
+              onClick={() => {
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const mailUrl = isLocal ? 'http://localhost:3000/storage-management' : 'https://www.bnxmail.com/storage-management';
+                window.location.href = mailUrl;
+              }}
             >
               <HardDrive size={20} />
               <span>Account storage</span>
