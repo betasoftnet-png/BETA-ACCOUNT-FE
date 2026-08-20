@@ -125,7 +125,7 @@ body {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
 }
 
 .brand-logo {
@@ -135,7 +135,7 @@ body {
 }
 
 .brand-logo img {
-  height: 32px;
+  height: 42px;
   width: auto;
   object-fit: contain;
 }
