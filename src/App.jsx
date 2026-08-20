@@ -7,6 +7,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import './App.css';
+import logo from './assets/beta.png'
 
 // Import modular components
 import HomeTab from './components/HomeTab';
@@ -217,7 +218,9 @@ function App() {
       <header className="account-top-nav">
         <div className="top-nav-left">
           <div className="sidebar-brand">
-            <div className="brand-logo">B2</div>
+            <div className="brand-logo">
+              <img src={logo} alt='beta logo' />
+            </div>
             <span className="brand-name">Account</span>
           </div>
         </div>
