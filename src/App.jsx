@@ -219,7 +219,7 @@ function App() {
         <div className="top-nav-left">
           <div className="sidebar-brand">
             <div className="brand-logo">
-              <img src={logo} alt='beta logo' />
+              <img src={logo} alt='beta logo' height={20} />
             </div>
             <span className="brand-name">Account</span>
           </div>
