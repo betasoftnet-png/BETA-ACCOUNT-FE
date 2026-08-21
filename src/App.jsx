@@ -59,16 +59,8 @@ function App() {
             localStorage.setItem('bnx_accessToken', token);
             window.history.replaceState({}, document.title, window.location.pathname);
             
-            // Also save to accounts array so the switcher works!
-            const storedAccounts = JSON.parse(localStorage.getItem('bnx_accounts') || '[]');
-            // We fetch the profile first to get userData to save to the array
-            fetchProfile(token).then(user => {
-              if (user && !storedAccounts.some(acc => acc.userData.email === user.email)) {
-                storedAccounts.push({ token, userData: user });
-                localStorage.setItem('bnx_accounts', JSON.stringify(storedAccounts));
-                setAccounts(storedAccounts);
-              }
-            });
+            // fetchProfile will automatically save this new account to the bnx_accounts array!
+            fetchProfile(token);
             return;
           }
         } catch (err) {
@@ -108,7 +100,24 @@ function App() {
         setUser(res.data.data);
         fetchEmails(token);
         fetchStorage(token);
-        return res.data.data;
+        
+        // Sync active session into the multi-account list
+        const user = res.data.data;
+        const storedAccounts = JSON.parse(localStorage.getItem('bnx_accounts') || '[]');
+        
+        const existingIndex = storedAccounts.findIndex(acc => acc.userData.email === user.email);
+        if (existingIndex >= 0) {
+          // Update token/data if it already exists
+          storedAccounts[existingIndex] = { token, userData: user };
+        } else {
+          // Add if it's a new account
+          storedAccounts.push({ token, userData: user });
+        }
+        
+        localStorage.setItem('bnx_accounts', JSON.stringify(storedAccounts));
+        setAccounts(storedAccounts);
+        
+        return user;
       }
     } catch (err) {
       console.error("Failed to fetch profile", err);
