@@ -308,14 +308,14 @@ function App() {
               onClick={() => setShowAccountSwitcher(!showAccountSwitcher)}
             >
               <div className="avatar-circle-elite" style={{ overflow: 'hidden' }}>
-                {user.profilePicture ? (
+                {user.profilePicture && user.profilePicture !== 'null' ? (
                   <img
                     src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`}
                     alt={user.firstName}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
-                  user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'
+                  (user.firstName?.[0] || user.email?.[0] || 'U').toUpperCase()
                 )}
               </div>
               <span className="profile-display-name">
@@ -337,14 +337,14 @@ function App() {
                 <div className="switcher-panel animate-scale-in">
                   <div className="current-account-banner">
                     <div className="banner-avatar" style={{ overflow: 'hidden' }}>
-                      {user.profilePicture ? (
+                      {user.profilePicture && user.profilePicture !== 'null' ? (
                         <img
                           src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`}
                           alt={user.firstName}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : (
-                        user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'
+                        (user.firstName?.[0] || user.email?.[0] || 'U').toUpperCase()
                       )}
                     </div>
                     <div className="banner-info">
@@ -361,14 +361,14 @@ function App() {
                         onClick={() => handleSwitchAccount(account)}
                       >
                         <div className="row-avatar" style={{ overflow: 'hidden' }}>
-                          {account.userData?.profilePicture ? (
+                          {account.userData?.profilePicture && account.userData.profilePicture !== 'null' ? (
                             <img
                               src={`${API_BASE}/users/profile-picture/${account.userData.username}?t=${account.userData.profilePicture}`}
                               alt={account.userData.firstName}
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
                           ) : (
-                            account.userData?.firstName?.[0] || account.userData?.email?.[0]?.toUpperCase() || 'U'
+                            (account.userData?.firstName?.[0] || account.userData?.email?.[0] || 'U').toUpperCase()
                           )}
                         </div>
                         <div className="row-info">
@@ -455,11 +455,17 @@ function App() {
           <header className="account-header">
             <div className="user-brief">
               <div className="avatar-large" style={{ overflow: 'hidden' }}>
-                <img
-                  src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`}
-                  alt={user.firstName}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                {user.profilePicture && user.profilePicture !== 'null' ? (
+                  <img
+                    src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`}
+                    alt={user.firstName}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span style={{ fontSize: '32px', fontWeight: 'bold' }}>
+                    {(user.firstName?.[0] || user.email?.[0] || 'U').toUpperCase()}
+                  </span>
+                )}
               </div>
               <div className="header-titles">
                 <h1 style={{ textTransform: 'capitalize' }}>Welcome, {user.displayName || user.firstName}</h1>
