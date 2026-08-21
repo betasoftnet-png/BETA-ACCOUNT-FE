@@ -262,8 +262,16 @@ function App() {
               className="profile-trigger-btn"
               onClick={() => setShowAccountSwitcher(!showAccountSwitcher)}
             >
-              <div className="avatar-circle-elite">
-                {user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+              <div className="avatar-circle-elite" style={{ overflow: 'hidden' }}>
+                {user.profilePicture ? (
+                  <img 
+                    src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`} 
+                    alt={user.firstName}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'
+                )}
               </div>
               <span className="profile-display-name">
                 {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user.email || 'User')}
@@ -283,8 +291,16 @@ function App() {
                 <div className="switcher-overlay-fixed" onClick={() => setShowAccountSwitcher(false)} />
                 <div className="switcher-panel animate-scale-in">
                   <div className="current-account-banner">
-                    <div className="banner-avatar">
-                      {user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                    <div className="banner-avatar" style={{ overflow: 'hidden' }}>
+                      {user.profilePicture ? (
+                        <img 
+                          src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`} 
+                          alt={user.firstName}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'
+                      )}
                     </div>
                     <div className="banner-info">
                       <div className="banner-name">{user.firstName} {user.lastName}</div>
@@ -299,8 +315,16 @@ function App() {
                         className="account-row"
                         onClick={() => handleSwitchAccount(account)}
                       >
-                        <div className="row-avatar">
-                          {account.userData?.firstName?.[0] || account.userData?.email?.[0]?.toUpperCase() || 'U'}
+                        <div className="row-avatar" style={{ overflow: 'hidden' }}>
+                          {account.userData?.profilePicture ? (
+                            <img 
+                              src={`${API_BASE}/users/profile-picture/${account.userData.username}?t=${account.userData.profilePicture}`} 
+                              alt={account.userData.firstName}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            account.userData?.firstName?.[0] || account.userData?.email?.[0]?.toUpperCase() || 'U'
+                          )}
                         </div>
                         <div className="row-info">
                           <div className="row-name">{account.userData?.firstName} {account.userData?.lastName}</div>
