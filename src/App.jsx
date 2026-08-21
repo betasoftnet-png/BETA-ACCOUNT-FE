@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  User, ShieldCheck, CreditCard, LogOut, CheckCircle2, AlertCircle, RefreshCw, 
+import {
+  User, ShieldCheck, CreditCard, LogOut, CheckCircle2, AlertCircle, RefreshCw,
   HelpCircle, Grid, Home, HardDrive, ChevronRight, Key, Smartphone, Trash2, Globe, Mail, Info, ChevronDown, Plus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +22,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  
+
   // Account Switcher State
   const [accounts, setAccounts] = useState(() => {
     try {
@@ -32,7 +32,7 @@ function App() {
     }
   });
   const [showAccountSwitcher, setShowAccountSwitcher] = useState(false);
-  
+
   // 2FA Setup State
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [twoFactorSecret, setTwoFactorSecret] = useState('');
@@ -43,41 +43,17 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
-    const urlCode = params.get('code');
+    if (urlToken) {
+      localStorage.setItem('bnx_accessToken', urlToken);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
-    const initializeSession = async () => {
-      if (urlCode) {
-        try {
-          const res = await axios.post(`${API_BASE}/oauth/token`, {
-            clientId: 'account-ui',
-            clientSecret: 'secure-account-secret-2026',
-            code: urlCode,
-            grantType: 'authorization_code'
-          });
-          if (res.data.success) {
-            const token = res.data.data.accessToken;
-            localStorage.setItem('bnx_accessToken', token);
-            window.history.replaceState({}, document.title, window.location.pathname);
-            fetchProfile(token);
-            return;
-          }
-        } catch (err) {
-          console.error('Failed to exchange OAuth code', err);
-        }
-      } else if (urlToken) {
-        localStorage.setItem('bnx_accessToken', urlToken);
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-
-      const token = localStorage.getItem('bnx_accessToken');
-      if (!token) {
-        window.location.href = 'https://b2auth.com/';
-        return;
-      }
-      fetchProfile(token);
-    };
-
-    initializeSession();
+    const token = localStorage.getItem('bnx_accessToken');
+    if (!token) {
+      window.location.href = 'https://b2auth.com/';
+      return;
+    }
+    fetchProfile(token);
   }, []);
 
   useEffect(() => {
@@ -280,7 +256,7 @@ function App() {
         <div className="top-nav-right" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
           <button className="top-icon-btn"><HelpCircle size={20} /></button>
           <button className="top-icon-btn"><Grid size={20} /></button>
-          
+
           <div className="account-switcher-container" style={{ marginLeft: '8px' }}>
             <button
               className="profile-trigger-btn"
@@ -288,8 +264,8 @@ function App() {
             >
               <div className="avatar-circle-elite" style={{ overflow: 'hidden' }}>
                 {user.profilePicture ? (
-                  <img 
-                    src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`} 
+                  <img
+                    src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`}
                     alt={user.firstName}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -300,13 +276,13 @@ function App() {
               <span className="profile-display-name">
                 {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user.email || 'User')}
               </span>
-              <ChevronDown 
-                size={16} 
-                style={{ 
-                  color: '#5f6368', 
+              <ChevronDown
+                size={16}
+                style={{
+                  color: '#5f6368',
                   transition: 'transform 0.2s ease',
                   transform: showAccountSwitcher ? 'rotate(180deg)' : 'rotate(0deg)'
-                }} 
+                }}
               />
             </button>
 
@@ -317,8 +293,8 @@ function App() {
                   <div className="current-account-banner">
                     <div className="banner-avatar" style={{ overflow: 'hidden' }}>
                       {user.profilePicture ? (
-                        <img 
-                          src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`} 
+                        <img
+                          src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture}`}
                           alt={user.firstName}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
@@ -341,8 +317,8 @@ function App() {
                       >
                         <div className="row-avatar" style={{ overflow: 'hidden' }}>
                           {account.userData?.profilePicture ? (
-                            <img 
-                              src={`${API_BASE}/users/profile-picture/${account.userData.username}?t=${account.userData.profilePicture}`} 
+                            <img
+                              src={`${API_BASE}/users/profile-picture/${account.userData.username}?t=${account.userData.profilePicture}`}
                               alt={account.userData.firstName}
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
@@ -378,28 +354,28 @@ function App() {
       <div className="account-layout-body">
         <nav className="account-sidebar">
           <div className="sidebar-nav">
-            <button 
+            <button
               className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}
               onClick={() => setActiveTab('home')}
             >
               <Home size={20} />
               <span>Home</span>
             </button>
-            <button 
+            <button
               className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
               <User size={20} />
               <span>Personal info</span>
             </button>
-            <button 
+            <button
               className={`nav-item ${activeTab === 'billing' ? 'active' : ''}`}
               onClick={() => setActiveTab('billing')}
             >
               <CreditCard size={20} />
               <span>Payment & subscription</span>
             </button>
-            <button 
+            <button
               className="nav-item"
               onClick={() => {
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -410,7 +386,7 @@ function App() {
               <HardDrive size={20} />
               <span>Account storage</span>
             </button>
-            <button 
+            <button
               className="nav-item"
               onClick={() => window.location.href = 'https://b2auth.com/'}
             >
@@ -434,14 +410,14 @@ function App() {
           <header className="account-header">
             <div className="user-brief">
               <div className="avatar-large" style={{ overflow: 'hidden' }}>
-                <img 
-                  src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
+                <img
+                  src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`}
                   alt={user.firstName}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
               <div className="header-titles">
-                <h1 style={{textTransform:'capitalize'}}>Welcome, {user.displayName || user.firstName}</h1>
+                <h1 style={{ textTransform: 'capitalize' }}>Welcome, {user.displayName || user.firstName}</h1>
                 <p>Manage your info, privacy, and security to make B2Auth work better for you.</p>
               </div>
             </div>
@@ -450,16 +426,16 @@ function App() {
           <section className="content-area">
             <AnimatePresence mode="wait">
               {activeTab === 'home' && (
-                <HomeTab 
-                  user={user} 
-                  storagePercentage={storagePercentage} 
-                  formatStorage={formatStorage} 
-                  setActiveTab={setActiveTab} 
+                <HomeTab
+                  user={user}
+                  storagePercentage={storagePercentage}
+                  formatStorage={formatStorage}
+                  setActiveTab={setActiveTab}
                 />
               )}
 
               {activeTab === 'emails' && (
-                <motion.div 
+                <motion.div
                   key="emails"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -468,7 +444,7 @@ function App() {
                   <div className="content-card">
                     <h2>Your Email Identities</h2>
                     <p className="card-desc">Your primary email is used for account-related notifications and as your default identity.</p>
-                    
+
                     <div className="email-list-elite">
                       {mailboxes.map((mailbox) => (
                         <div className={`email-item-elite ${mailbox.isPrimary ? 'primary' : ''}`} key={mailbox.emailId}>
@@ -485,7 +461,7 @@ function App() {
                             {mailbox.isPrimary ? (
                               <span className="badge-primary">Primary</span>
                             ) : (
-                              <button 
+                              <button
                                 className="make-primary-btn"
                                 onClick={() => handleMakePrimary(mailbox.emailId)}
                                 disabled={loading}
@@ -498,7 +474,7 @@ function App() {
                       ))}
                     </div>
 
-                    <div className="info-box-light" style={{ marginTop: '24px' , display:'flex', gap:'5px'}}>
+                    <div className="info-box-light" style={{ marginTop: '24px', display: 'flex', gap: '5px' }}>
                       <Info size={18} /><p>To add a new email address, you must register it through the BNX Mail application.</p>
                     </div>
                   </div>
@@ -506,18 +482,18 @@ function App() {
               )}
 
               {activeTab === 'profile' && (
-                <ProfileTab 
-                  user={user} 
-                  setUser={setUser} 
-                  loading={loading} 
-                  setLoading={setLoading} 
-                  setMessage={setMessage} 
-                  API_BASE={API_BASE} 
+                <ProfileTab
+                  user={user}
+                  setUser={setUser}
+                  loading={loading}
+                  setLoading={setLoading}
+                  setMessage={setMessage}
+                  API_BASE={API_BASE}
                 />
               )}
 
               {activeTab === 'security' && (
-                <motion.div 
+                <motion.div
                   key="security"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -537,26 +513,26 @@ function App() {
                           </div>
                         </div>
                         <div className="item-action">
-                           {user.twoFactorEnabled ? (
-                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                 <CheckCircle2 size={16} color="#188038" />
-                                 <span className="status-badge success">On</span>
-                               </div>
-                               <button 
-                                 className="setup-btn" 
-                                 style={{ color: '#d93025', borderColor: '#dadce0' }}
-                                 onClick={handleDisable2FA}
-                               >
-                                 Disable
-                               </button>
-                             </div>
-                           ) : (
+                          {user.twoFactorEnabled ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <CheckCircle2 size={16} color="#188038" />
+                                <span className="status-badge success">On</span>
+                              </div>
+                              <button
+                                className="setup-btn"
+                                style={{ color: '#d93025', borderColor: '#dadce0' }}
+                                onClick={handleDisable2FA}
+                              >
+                                Disable
+                              </button>
+                            </div>
+                          ) : (
                             <button className="setup-btn" onClick={handleEnable2FA}>Set up</button>
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="security-item clickable">
                         <div className="item-info">
                           <div className="item-icon"><Key size={20} /></div>
@@ -575,7 +551,7 @@ function App() {
               )}
 
               {activeTab === 'privacy' && (
-                <motion.div 
+                <motion.div
                   key="privacy"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -620,23 +596,23 @@ function App() {
               )}
 
               {activeTab === 'storage' && (
-                <StorageTab 
-                  user={user} 
-                  storagePercentage={storagePercentage} 
-                  formatStorage={formatStorage} 
+                <StorageTab
+                  user={user}
+                  storagePercentage={storagePercentage}
+                  formatStorage={formatStorage}
                 />
               )}
             </AnimatePresence>
           </section>
         </main>
       </div>
-      
+
       {show2FASetup && (
         <div className="setup-overlay">
           <div className="setup-modal animate-scale-in">
             <h3>Set up BNX Authenticator</h3>
             <p>Scan this QR code with the <b>B2Auth</b> app or any other authenticator app to get verification codes.</p>
-            
+
             <div className="qr-container">
               <QRCodeSVG value={qrCodeUrl} size={160} />
             </div>
@@ -650,22 +626,22 @@ function App() {
 
             <div className="verify-step">
               <label>Enter code</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 maxLength="6"
                 placeholder="6-digit code"
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
               />
-              <button 
-                className="verify-btn" 
+              <button
+                className="verify-btn"
                 onClick={handleVerify2FA}
                 disabled={verificationCode.length !== 6 || loading}
               >
                 {loading ? <RefreshCw className="spin" size={18} /> : 'Verify'}
               </button>
             </div>
-            
+
             <button className="close-link" onClick={() => setShow2FASetup(false)}>Cancel</button>
           </div>
         </div>
