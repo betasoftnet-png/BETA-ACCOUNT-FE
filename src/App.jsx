@@ -43,17 +43,41 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
-    if (urlToken) {
-      localStorage.setItem('bnx_accessToken', urlToken);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    const urlCode = params.get('code');
 
-    const token = localStorage.getItem('bnx_accessToken');
-    if (!token) {
-      window.location.href = 'https://b2auth.com/';
-      return;
-    }
-    fetchProfile(token);
+    const initializeSession = async () => {
+      if (urlCode) {
+        try {
+          const res = await axios.post(`${API_BASE}/oauth/token`, {
+            clientId: 'account-ui',
+            clientSecret: 'secure-account-secret-2026',
+            code: urlCode,
+            grantType: 'authorization_code'
+          });
+          if (res.data.success) {
+            const token = res.data.data.accessToken;
+            localStorage.setItem('bnx_accessToken', token);
+            window.history.replaceState({}, document.title, window.location.pathname);
+            fetchProfile(token);
+            return;
+          }
+        } catch (err) {
+          console.error('Failed to exchange OAuth code', err);
+        }
+      } else if (urlToken) {
+        localStorage.setItem('bnx_accessToken', urlToken);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      const token = localStorage.getItem('bnx_accessToken');
+      if (!token) {
+        window.location.href = 'https://b2auth.com/';
+        return;
+      }
+      fetchProfile(token);
+    };
+
+    initializeSession();
   }, []);
 
   useEffect(() => {
@@ -221,7 +245,7 @@ function App() {
   };
 
   const handleAddAccount = () => {
-    window.location.href = 'https://b2auth.com/login?prompt=select_account';
+    window.location.href = `https://b2auth.com/?client_id=account-ui&redirect_uri=${encodeURIComponent(window.location.origin)}`;
   };
 
   const handleSignOutAll = () => {
