@@ -55,7 +55,7 @@ function App() {
             grantType: 'authorization_code'
           });
           if (res.data.success) {
-            const token = res.data.data.accessToken;
+            const token = res.data.data.access_token;
             localStorage.setItem('bnx_accessToken', token);
             window.history.replaceState({}, document.title, window.location.pathname);
             
