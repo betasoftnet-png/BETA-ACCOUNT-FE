@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   User, ShieldCheck, CreditCard, LogOut, CheckCircle2, AlertCircle, RefreshCw, 
-  HelpCircle, Grid, Home, HardDrive, ChevronRight, Key, Smartphone, Trash2, Globe, Mail, Info
+  HelpCircle, Grid, Home, HardDrive, ChevronRight, Key, Smartphone, Trash2, Globe, Mail, Info, ChevronDown, Plus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
@@ -22,6 +22,16 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  
+  // Account Switcher State
+  const [accounts, setAccounts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('bnx_accounts') || '[]');
+    } catch (e) {
+      return [];
+    }
+  });
+  const [showAccountSwitcher, setShowAccountSwitcher] = useState(false);
   
   // 2FA Setup State
   const [show2FASetup, setShow2FASetup] = useState(false);
@@ -200,6 +210,25 @@ function App() {
     }
   };
 
+  const handleSwitchAccount = (account) => {
+    if (account.token) {
+      localStorage.setItem('bnx_accessToken', account.token);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setShowAccountSwitcher(false);
+      setUser(null); // Trigger loading state
+      fetchProfile(account.token);
+    }
+  };
+
+  const handleAddAccount = () => {
+    window.location.href = 'https://b2auth.com/login?prompt=select_account';
+  };
+
+  const handleSignOutAll = () => {
+    localStorage.clear();
+    window.location.href = 'https://b2auth.com/';
+  };
+
   if (!user) return <div className="loading-screen">Loading your B2Auth Account...</div>;
 
   const formatStorage = (bytes) => {
@@ -224,15 +253,76 @@ function App() {
             <span className="brand-name">Account</span>
           </div>
         </div>
-        <div className="top-nav-right">
+        <div className="top-nav-right" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
           <button className="top-icon-btn"><HelpCircle size={20} /></button>
           <button className="top-icon-btn"><Grid size={20} /></button>
-          <div className="user-avatar-mini" title={user.email} style={{ overflow: 'hidden' }}>
-            <img 
-              src={`${API_BASE}/users/profile-picture/${user.username}?t=${user.profilePicture || ''}`} 
-              alt={user.firstName}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+          
+          <div className="account-switcher-container" style={{ marginLeft: '8px' }}>
+            <button
+              className="profile-trigger-btn"
+              onClick={() => setShowAccountSwitcher(!showAccountSwitcher)}
+            >
+              <div className="avatar-circle-elite">
+                {user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+              </div>
+              <span className="profile-display-name">
+                {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user.email || 'User')}
+              </span>
+              <ChevronDown 
+                size={16} 
+                style={{ 
+                  color: '#5f6368', 
+                  transition: 'transform 0.2s ease',
+                  transform: showAccountSwitcher ? 'rotate(180deg)' : 'rotate(0deg)'
+                }} 
+              />
+            </button>
+
+            {showAccountSwitcher && (
+              <>
+                <div className="switcher-overlay-fixed" onClick={() => setShowAccountSwitcher(false)} />
+                <div className="switcher-panel animate-scale-in">
+                  <div className="current-account-banner">
+                    <div className="banner-avatar">
+                      {user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                    <div className="banner-info">
+                      <div className="banner-name">{user.firstName} {user.lastName}</div>
+                      <div className="banner-email">{user.email}</div>
+                    </div>
+                  </div>
+
+                  <div className="other-accounts-section">
+                    {accounts.filter(a => a.token !== localStorage.getItem('bnx_accessToken')).map(account => (
+                      <div
+                        key={account.userData?.email || account.token}
+                        className="account-row"
+                        onClick={() => handleSwitchAccount(account)}
+                      >
+                        <div className="row-avatar">
+                          {account.userData?.firstName?.[0] || account.userData?.email?.[0]?.toUpperCase() || 'U'}
+                        </div>
+                        <div className="row-info">
+                          <div className="row-name">{account.userData?.firstName} {account.userData?.lastName}</div>
+                          <div className="row-email">{account.userData?.email}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="switcher-actions-list">
+                    <button className="action-item-btn" onClick={handleAddAccount}>
+                      <Plus size={18} />
+                      <span>Add another account</span>
+                    </button>
+                    <button className="action-item-btn" onClick={handleSignOutAll}>
+                      <LogOut size={18} />
+                      <span>Sign out of all accounts</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
