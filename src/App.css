@@ -2,6 +2,13 @@
   --primary: #1a73e8;
   --primary-hover: #1765cc;
   --primary-soft: #e8f0fe;
+  --accent: #8ab4f8;
+  --success: #188038;
+  --success-bg: #e6f4ea;
+  --danger: #d93025;
+  --danger-bg: #fce8e6;
+  --warning: #f29900;
+  --warning-bg: #fef7e0;
   
   --text-main: #202124;
   --text-secondary: #5f6368;
