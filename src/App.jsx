@@ -43,17 +43,51 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
-    if (urlToken) {
-      localStorage.setItem('bnx_accessToken', urlToken);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    const urlCode = params.get('code');
 
-    const token = localStorage.getItem('bnx_accessToken');
-    if (!token) {
-      window.location.href = 'https://b2auth.com/';
-      return;
-    }
-    fetchProfile(token);
+    const initializeSession = async () => {
+      if (urlCode) {
+        try {
+          const res = await axios.post(`${API_BASE}/oauth/token`, {
+            clientId: 'account-ui',
+            clientSecret: 'secure-account-secret-2026',
+            code: urlCode,
+            grantType: 'authorization_code'
+          });
+          if (res.data.success) {
+            const token = res.data.data.accessToken;
+            localStorage.setItem('bnx_accessToken', token);
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Also save to accounts array so the switcher works!
+            const storedAccounts = JSON.parse(localStorage.getItem('bnx_accounts') || '[]');
+            // We fetch the profile first to get userData to save to the array
+            fetchProfile(token).then(user => {
+              if (user && !storedAccounts.some(acc => acc.userData.email === user.email)) {
+                storedAccounts.push({ token, userData: user });
+                localStorage.setItem('bnx_accounts', JSON.stringify(storedAccounts));
+                setAccounts(storedAccounts);
+              }
+            });
+            return;
+          }
+        } catch (err) {
+          console.error('Failed to exchange OAuth code', err);
+        }
+      } else if (urlToken) {
+        localStorage.setItem('bnx_accessToken', urlToken);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      const token = localStorage.getItem('bnx_accessToken');
+      if (!token) {
+        window.location.href = 'https://b2auth.com/';
+        return;
+      }
+      fetchProfile(token);
+    };
+
+    initializeSession();
   }, []);
 
   useEffect(() => {
@@ -74,6 +108,7 @@ function App() {
         setUser(res.data.data);
         fetchEmails(token);
         fetchStorage(token);
+        return res.data.data;
       }
     } catch (err) {
       console.error("Failed to fetch profile", err);
@@ -81,6 +116,7 @@ function App() {
         window.location.href = 'https://b2auth.com/';
       }
     }
+    return null;
   };
 
   const fetchStorage = async (token) => {
