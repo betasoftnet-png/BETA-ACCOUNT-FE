@@ -166,7 +166,7 @@ export default function SubIdManager({ token, user }) {
                     onChange={e => setFormData({...formData, prefix: e.target.value.toLowerCase()})}
                   />
                   <div style={{ padding: '12px', backgroundColor: '#f1f3f4', border: '1px solid #dadce0', borderRadius: '0 8px 8px 0', color: '#5f6368', fontSize: '16px' }}>
-                    .{user?.username || 'parent'}
+                    .{user?.email || user?.username || 'parent'}
                   </div>
                 </div>
               </div>
