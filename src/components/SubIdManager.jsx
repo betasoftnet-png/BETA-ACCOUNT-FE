@@ -419,14 +419,17 @@ export default function SubIdManager({ token, user }) {
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
-          <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: formData.accountType === 'BUSINESS' ? '960px' : '480px', transition: 'max-width 0.3s ease' }}>
+          {/* <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: formData.accountType === 'BUSINESS' ? '960px' : '480px', transition: 'max-width 0.3s ease' }}> */}
+          <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: '480px', transition: 'max-width 0.3s ease' }}>
             <h3 style={{ fontSize: '20px', marginBottom: '24px' }}>Create New Sub-ID</h3>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              <div style={{ display: 'flex', gap: '32px', flexDirection: formData.accountType === 'BUSINESS' ? 'row' : 'column' }}>
+              {/* <div style={{ display: 'flex', gap: '32px', flexDirection: formData.accountType === 'BUSINESS' ? 'row' : 'column' }}> */}
+              <div style={{ display: 'flex', gap: '32px', flexDirection: 'column' }}>
                 
                 {/* Left Side: Form Fields */}
-                <div style={{ flex: formData.accountType === 'BUSINESS' ? '0 0 400px' : '1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* <div style={{ flex: formData.accountType === 'BUSINESS' ? '0 0 400px' : '1', display: 'flex', flexDirection: 'column', gap: '16px' }}> */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Account Type</label>
                     <select 
@@ -487,7 +490,8 @@ export default function SubIdManager({ token, user }) {
                   </div>
                 </div>
 
-                {/* Right Side: Permissions */}
+                {/* Right Side: Permissions (Temporarily Commented Out) */}
+                {/* 
                 {formData.accountType === 'BUSINESS' && (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Access Permissions</label>
@@ -513,6 +517,7 @@ export default function SubIdManager({ token, user }) {
                     </div>
                   </div>
                 )}
+                */}
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '8px' }}>
