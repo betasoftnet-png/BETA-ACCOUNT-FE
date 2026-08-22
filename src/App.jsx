@@ -668,7 +668,7 @@ function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <SubIdManager token={token} user={user} />
+                  <SubIdManager token={localStorage.getItem(bnx_accessToken)} user={user} />
                 </motion.div>
               )}
             </AnimatePresence>
