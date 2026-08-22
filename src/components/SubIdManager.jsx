@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Trash2, Shield, User as UserIcon, Loader } from 'lucide-react';
+import { Plus, Trash2, Shield, User as UserIcon, Loader, ChevronRight, ChevronDown, DollarSign, ShoppingCart, Package, Users, FileText, Monitor, Tag } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
@@ -197,43 +197,77 @@ const getAllIds = (node) => {
   return ids;
 };
 
+const CATEGORY_ICONS = {
+  'Finance': DollarSign,
+  'Sales': ShoppingCart,
+  'Purchases': ShoppingCart,
+  'Inventory': Package,
+  'HR': Users,
+  'POS Billing': Monitor,
+  'Reports': FileText,
+  'Barcode Gen': Tag,
+  'Marketing': Tag
+};
+
 const PermissionNode = ({ node, selectedIds, onChange, depth = 0 }) => {
   const allIds = getAllIds(node);
   const isAllSelected = allIds.length > 0 && allIds.every(id => selectedIds.includes(id));
   const isSomeSelected = allIds.some(id => selectedIds.includes(id)) && !isAllSelected;
   const [expanded, setExpanded] = useState(depth === 0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleToggle = (e) => {
+    e.stopPropagation();
     const checked = e.target.checked;
     onChange(allIds, checked);
   };
 
+  const Icon = depth === 0 ? CATEGORY_ICONS[node.label] : null;
+
   return (
-    <div style={{ marginLeft: depth > 0 ? '24px' : '0', marginBottom: '8px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-        {node.children && (
-          <button type="button" onClick={() => setExpanded(!expanded)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', width: '20px' }}>
-            {expanded ? '▼' : '▶'}
-          </button>
-        )}
-        {!node.children && <div style={{ width: '20px' }}></div>}
-        
-        <label style={{ display: 'flex', alignItems: 'center', fontSize: depth === 0 ? '15px' : '14px', fontWeight: depth === 0 ? '600' : 'normal', cursor: 'pointer', margin: 0 }}>
+    <div style={{ paddingLeft: depth > 0 ? '28px' : '0', marginBottom: '2px' }}>
+      <div 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => node.children && setExpanded(!expanded)}
+        style={{ 
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+          padding: depth === 0 ? '12px 16px' : '10px 12px',
+          backgroundColor: isHovered ? '#f1f3f4' : (depth === 0 && expanded ? '#f8f9fa' : 'transparent'),
+          borderRadius: '8px',
+          cursor: node.children ? 'pointer' : 'default',
+          transition: 'background-color 0.2s',
+          borderBottom: depth === 0 && !expanded && !isHovered ? '1px solid #f1f3f4' : '1px solid transparent'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <input 
             type="checkbox"
-            style={{ marginRight: '8px' }}
+            style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#0b57d0', margin: 0 }}
             checked={isAllSelected}
-            ref={input => {
-              if (input) input.indeterminate = isSomeSelected;
-            }}
+            ref={input => { if (input) input.indeterminate = isSomeSelected; }}
             onChange={handleToggle}
+            onClick={e => e.stopPropagation()}
           />
-          {node.label}
-        </label>
+          {Icon && <Icon size={20} color={isAllSelected ? '#0b57d0' : '#5f6368'} />}
+          <span style={{ 
+            fontSize: depth === 0 ? '16px' : '15px', 
+            fontWeight: depth === 0 ? '600' : (isAllSelected ? '500' : '400'),
+            color: isAllSelected && depth === 0 ? '#0b57d0' : '#202124'
+          }}>
+            {node.label}
+          </span>
+        </div>
+        
+        {node.children && (
+          <div style={{ color: '#5f6368', display: 'flex', alignItems: 'center' }}>
+            {expanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+          </div>
+        )}
       </div>
       
       {expanded && node.children && (
-        <div style={{ marginTop: '4px' }}>
+        <div style={{ marginTop: '4px', marginBottom: depth === 0 ? '16px' : '4px' }}>
           {node.children.map((child, idx) => (
             <PermissionNode 
               key={idx} 
@@ -385,96 +419,103 @@ export default function SubIdManager({ token, user }) {
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
-          <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: '480px' }}>
+          <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: formData.accountType === 'BUSINESS' ? '960px' : '480px', transition: 'max-width 0.3s ease' }}>
             <h3 style={{ fontSize: '20px', marginBottom: '24px' }}>Create New Sub-ID</h3>
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Account Type</label>
-                <select 
-                  style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
-                  value={formData.accountType}
-                  onChange={e => setFormData({...formData, accountType: e.target.value})}
-                >
-                  <option value="BUSINESS">Business (Employee / Team)</option>
-                  <option value="PERSONAL">Personal (Assistant / Family)</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Username Prefix</label>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <input 
-                    type="text" required
-                    style={{ flex: 1, padding: '12px', border: '1px solid #dadce0', borderRight: 'none', borderRadius: '8px 0 0 8px', fontSize: '16px' }}
-                    placeholder="e.g. hr"
-                    value={formData.prefix}
-                    onChange={e => setFormData({...formData, prefix: e.target.value.toLowerCase()})}
-                  />
-                  <div style={{ padding: '12px', backgroundColor: '#f1f3f4', border: '1px solid #dadce0', borderRadius: '0 8px 8px 0', color: '#5f6368', fontSize: '16px' }}>
-                    .{user?.email || user?.username || 'parent'}
+              <div style={{ display: 'flex', gap: '32px', flexDirection: formData.accountType === 'BUSINESS' ? 'row' : 'column' }}>
+                
+                {/* Left Side: Form Fields */}
+                <div style={{ flex: formData.accountType === 'BUSINESS' ? '0 0 400px' : '1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Account Type</label>
+                    <select 
+                      style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
+                      value={formData.accountType}
+                      onChange={e => setFormData({...formData, accountType: e.target.value})}
+                    >
+                      <option value="BUSINESS">Business (Employee / Team)</option>
+                      <option value="PERSONAL">Personal (Assistant / Family)</option>
+                    </select>
                   </div>
-                </div>
-              </div>
 
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>First Name</label>
-                  <input 
-                    type="text" required
-                    style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
-                    value={formData.firstName}
-                    onChange={e => setFormData({...formData, firstName: e.target.value})}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Last Name</label>
-                  <input 
-                    type="text"
-                    style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
-                    value={formData.lastName}
-                    onChange={e => setFormData({...formData, lastName: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Temporary Password</label>
-                <input 
-                  type="text" required minLength="8"
-                  style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
-                  value={formData.password}
-                  onChange={e => setFormData({...formData, password: e.target.value})}
-                />
-              </div>
-
-              {formData.accountType === 'BUSINESS' && (
-                <div style={{ marginTop: '8px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '12px', fontWeight: '500' }}>Access Permissions</label>
-                  <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #dadce0', borderRadius: '8px', padding: '16px', backgroundColor: '#f8f9fa' }}>
-                    {PERMISSIONS_HIERARCHY.map((node, idx) => (
-                      <PermissionNode 
-                        key={idx} 
-                        node={node} 
-                        selectedIds={formData.permissions} 
-                        onChange={(ids, checked) => {
-                          setFormData(prev => {
-                            let newPermissions = new Set(prev.permissions);
-                            if (checked) {
-                              ids.forEach(id => newPermissions.add(id));
-                            } else {
-                              ids.forEach(id => newPermissions.delete(id));
-                            }
-                            return { ...prev, permissions: Array.from(newPermissions) };
-                          });
-                        }}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Username Prefix</label>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <input 
+                        type="text" required
+                        style={{ flex: 1, padding: '12px', border: '1px solid #dadce0', borderRight: 'none', borderRadius: '8px 0 0 8px', fontSize: '16px' }}
+                        placeholder="e.g. hr"
+                        value={formData.prefix}
+                        onChange={e => setFormData({...formData, prefix: e.target.value.toLowerCase()})}
                       />
-                    ))}
+                      <div style={{ padding: '12px', backgroundColor: '#f1f3f4', border: '1px solid #dadce0', borderRadius: '0 8px 8px 0', color: '#5f6368', fontSize: '16px' }}>
+                        .{user?.email || user?.username || 'parent'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '16px' }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>First Name</label>
+                      <input 
+                        type="text" required
+                        style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
+                        value={formData.firstName}
+                        onChange={e => setFormData({...formData, firstName: e.target.value})}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Last Name</label>
+                      <input 
+                        type="text"
+                        style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
+                        value={formData.lastName}
+                        onChange={e => setFormData({...formData, lastName: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Temporary Password</label>
+                    <input 
+                      type="text" required minLength="8"
+                      style={{ width: '100%', padding: '12px', border: '1px solid #dadce0', borderRadius: '8px', fontSize: '16px' }}
+                      value={formData.password}
+                      onChange={e => setFormData({...formData, password: e.target.value})}
+                    />
                   </div>
                 </div>
-              )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
+                {/* Right Side: Permissions */}
+                {formData.accountType === 'BUSINESS' && (
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>Access Permissions</label>
+                    <div style={{ flex: 1, minHeight: '340px', maxHeight: '380px', overflowY: 'auto', border: '1px solid #dadce0', borderRadius: '12px', padding: '12px', backgroundColor: '#ffffff' }}>
+                      {PERMISSIONS_HIERARCHY.map((node, idx) => (
+                        <PermissionNode 
+                          key={idx} 
+                          node={node} 
+                          selectedIds={formData.permissions} 
+                          onChange={(ids, checked) => {
+                            setFormData(prev => {
+                              let newPermissions = new Set(prev.permissions);
+                              if (checked) {
+                                ids.forEach(id => newPermissions.add(id));
+                              } else {
+                                ids.forEach(id => newPermissions.delete(id));
+                              }
+                              return { ...prev, permissions: Array.from(newPermissions) };
+                            });
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '8px' }}>
                 <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '10px 24px', background: 'none', border: 'none', color: '#5f6368', fontWeight: '500', cursor: 'pointer' }}>
                   Cancel
                 </button>
