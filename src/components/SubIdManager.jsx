@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Trash2, Shield, User as UserIcon, Loader } from 'lucide-react';
-import { API_BASE } from '../App';
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function SubIdManager({ token, user }) {
   const [subIds, setSubIds] = useState([]);
