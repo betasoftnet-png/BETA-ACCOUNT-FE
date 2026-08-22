@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   User, ShieldCheck, CreditCard, LogOut, CheckCircle2, AlertCircle, RefreshCw,
-  HelpCircle, Grid, Home, HardDrive, ChevronRight, Key, Smartphone, Trash2, Globe, Mail, Info, ChevronDown, Plus
+  HelpCircle, Grid, Home, HardDrive, ChevronRight, Key, Smartphone, Trash2, Globe, Mail, Info, ChevronDown, Plus, Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
@@ -14,6 +14,7 @@ import HomeTab from './components/HomeTab';
 import ProfileTab from './components/ProfileTab';
 import BillingTab from './components/BillingTab';
 import StorageTab from './components/StorageTab';
+import SubIdManager from './components/SubIdManager';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
@@ -421,6 +422,13 @@ function App() {
               <span>Payment & subscription</span>
             </button>
             <button
+              className={`nav-item ${activeTab === 'subids' ? 'active' : ''}`}
+              onClick={() => setActiveTab('subids')}
+            >
+              <Users size={20} />
+              <span>Team & Sub-IDs</span>
+            </button>
+            <button
               className="nav-item"
               onClick={() => {
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -652,6 +660,16 @@ function App() {
                   storagePercentage={storagePercentage}
                   formatStorage={formatStorage}
                 />
+              )}
+              {activeTab === 'subids' && (
+                <motion.div
+                  key="subids"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <SubIdManager token={token} user={user} />
+                </motion.div>
               )}
             </AnimatePresence>
           </section>
