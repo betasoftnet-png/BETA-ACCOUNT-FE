@@ -4,6 +4,95 @@ import { Plus, Trash2, Shield, User as UserIcon, Loader } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
+const PERMISSIONS = {
+  Finance: [
+    { id: 100, label: 'Finance All' },
+    { id: 110, label: 'Finance Accounting All' },
+    { id: 111, label: 'Finance P&L' },
+    { id: 112, label: 'Finance Balance Sheet' },
+    { id: 113, label: 'Finance Receivables & Payables' },
+    { id: 114, label: 'Finance Expenses' },
+    { id: 115, label: 'Finance Cash & Bank' },
+    { id: 120, label: 'Finance Expenses All' },
+    { id: 121, label: 'Finance Exp Registry ITC' },
+    { id: 122, label: 'Finance Exp Recurring' },
+    { id: 123, label: 'Finance Exp Dept Budgets' },
+    { id: 124, label: 'Finance Exp Staff Reimburse' },
+    { id: 130, label: 'Finance Tax All' },
+    { id: 131, label: 'Finance Tax GSTR1' },
+    { id: 132, label: 'Finance Tax GSTR2' },
+    { id: 133, label: 'Finance Tax GSTR3B' },
+    { id: 134, label: 'Finance Tax GSTR9' },
+    { id: 135, label: 'Finance Tax E-Invoice' },
+    { id: 136, label: 'Finance Tax E-Way' }
+  ],
+  Sales: [
+    { id: 200, label: 'Sales All' },
+    { id: 210, label: 'Sales Section All' },
+    { id: 211, label: 'Sales Invoice' },
+    { id: 212, label: 'Sales Orders List' },
+    { id: 213, label: 'Sales Returns' },
+    { id: 214, label: 'Sales Warranty Claims' },
+    { id: 220, label: 'Sales Cust All' },
+    { id: 221, label: 'Sales Cust List' },
+    { id: 222, label: 'Sales Cust Aging Reports' },
+    { id: 223, label: 'Sales Cust Points Rules' }
+  ],
+  Purchases: [
+    { id: 300, label: 'Purchases All' },
+    { id: 310, label: 'Purchases Section All' },
+    { id: 311, label: 'Purchases Invoice' },
+    { id: 312, label: 'Purchases Orders PO' },
+    { id: 313, label: 'Purchases Bills Invoices' },
+    { id: 314, label: 'Purchases Returns' },
+    { id: 320, label: 'Purchases Supp All' },
+    { id: 321, label: 'Purchases Supp List' },
+    { id: 322, label: 'Purchases Supp Ledger' },
+    { id: 323, label: 'Purchases Supp Aging Reminders' }
+  ],
+  Inventory: [
+    { id: 400, label: 'Inventory All' },
+    { id: 410, label: 'Inventory Section All' },
+    { id: 411, label: 'Inventory Products' },
+    { id: 412, label: 'Inventory Stock' },
+    { id: 413, label: 'Inventory Stock Registry' },
+    { id: 414, label: 'Inventory Inward Outward' },
+    { id: 415, label: 'Inventory Transfers' },
+    { id: 416, label: 'Inventory Batches Expiry' },
+    { id: 420, label: 'Inventory WH All' },
+    { id: 421, label: 'Inventory WH Godowns' },
+    { id: 422, label: 'Inventory WH Stock Registry' },
+    { id: 423, label: 'Inventory WH Goods Logs' },
+    { id: 424, label: 'Inventory WH Inter Transfers' }
+  ],
+  HR: [
+    { id: 500, label: 'HR All' },
+    { id: 510, label: 'HR Staff All' },
+    { id: 511, label: 'HR Staff Profiles' },
+    { id: 512, label: 'HR Staff Leave Rosters' },
+    { id: 513, label: 'HR Staff Appraisals' },
+    { id: 514, label: 'HR Staff Reimbursements' },
+    { id: 520, label: 'HR Att All' },
+    { id: 521, label: 'HR Att Today Logs' },
+    { id: 522, label: 'HR Att History Ledgers' },
+    { id: 523, label: 'HR Att Shift Configs' },
+    { id: 524, label: 'HR Att GPS Fencing' },
+    { id: 525, label: 'HR Att Correction Verify' },
+    { id: 526, label: 'HR Att Calendar' },
+    { id: 530, label: 'HR Pay All' },
+    { id: 531, label: 'HR Pay Monthly Register' },
+    { id: 532, label: 'HR Pay Salary Structures' },
+    { id: 533, label: 'HR Pay Compliance' },
+    { id: 534, label: 'HR Pay Loans Advances' }
+  ],
+  Others: [
+    { id: 600, label: 'POS Billing' },
+    { id: 700, label: 'Reports' },
+    { id: 800, label: 'Barcode Gen' },
+    { id: 900, label: 'Marketing' }
+  ]
+};
+
 export default function SubIdManager({ token, user }) {
   const [subIds, setSubIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +104,8 @@ export default function SubIdManager({ token, user }) {
     password: '',
     firstName: '',
     lastName: '',
-    accountType: 'BUSINESS' // default
+    accountType: 'BUSINESS', // default
+    permissions: []
   });
 
   const [creating, setCreating] = useState(false);
@@ -50,7 +140,7 @@ export default function SubIdManager({ token, user }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIsModalOpen(false);
-      setFormData({ prefix: '', password: '', firstName: '', lastName: '', accountType: 'BUSINESS' });
+      setFormData({ prefix: '', password: '', firstName: '', lastName: '', accountType: 'BUSINESS', permissions: [] });
       fetchSubIds();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create Sub-ID');
@@ -201,6 +291,40 @@ export default function SubIdManager({ token, user }) {
                   onChange={e => setFormData({...formData, password: e.target.value})}
                 />
               </div>
+
+              {formData.accountType === 'BUSINESS' && (
+                <div style={{ marginTop: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '12px', fontWeight: '500' }}>Access Permissions</label>
+                  <div style={{ maxHeight: '240px', overflowY: 'auto', border: '1px solid #dadce0', borderRadius: '8px', padding: '16px', backgroundColor: '#f8f9fa' }}>
+                    {Object.entries(PERMISSIONS).map(([category, items]) => (
+                      <div key={category} style={{ marginBottom: '16px' }}>
+                        <h4 style={{ fontSize: '14px', color: '#5f6368', marginBottom: '8px', borderBottom: '1px solid #dadce0', paddingBottom: '4px' }}>{category}</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }}>
+                          {items.map(p => (
+                            <label key={p.id} style={{ display: 'flex', alignItems: 'center', fontSize: '13px', cursor: 'pointer' }}>
+                              <input 
+                                type="checkbox"
+                                style={{ marginRight: '8px' }}
+                                checked={formData.permissions.includes(p.id)}
+                                onChange={e => {
+                                  const checked = e.target.checked;
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    permissions: checked 
+                                      ? [...prev.permissions, p.id] 
+                                      : prev.permissions.filter(id => id !== p.id)
+                                  }));
+                                }}
+                              />
+                              {p.label}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '10px 24px', background: 'none', border: 'none', color: '#5f6368', fontWeight: '500', cursor: 'pointer' }}>
