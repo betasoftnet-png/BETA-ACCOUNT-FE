@@ -22,6 +22,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(false);
+  const [initError, setInitError] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   // Account Switcher State
@@ -124,6 +125,8 @@ function App() {
       console.error("Failed to fetch profile", err);
       if (err.response?.status === 401) {
         window.location.href = 'https://b2auth.com/';
+      } else {
+        setInitError(err.response?.data?.message || err.message || "Network Error: Could not connect to API");
       }
     }
     return null;
@@ -275,6 +278,13 @@ function App() {
     window.location.href = 'https://b2auth.com/';
   };
 
+  if (initError) return (
+    <div className="loading-screen" style={{ color: 'var(--danger)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div>Failed to load account details.</div>
+      <div style={{ fontSize: '14px', opacity: 0.8 }}>{initError}</div>
+      <button onClick={() => window.location.reload()} className="secondary-btn">Retry</button>
+    </div>
+  );
   if (!user) return <div className="loading-screen">Loading your B2Auth Account...</div>;
 
   const formatStorage = (bytes) => {
