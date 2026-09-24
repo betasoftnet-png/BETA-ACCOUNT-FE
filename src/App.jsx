@@ -441,9 +441,10 @@ function App() {
             <button
               className="nav-item"
               onClick={() => {
+                const token = localStorage.getItem('bnx_accessToken') || '';
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const mailUrl = isLocal ? 'http://localhost:3000/storage-management' : 'https://www.bnxmail.com/storage-management';
-                window.location.href = mailUrl;
+                const storageUrl = isLocal ? `http://localhost:5174/${token}` : `https://storage.beta-softnet.com/${token}`;
+                window.location.href = storageUrl;
               }}
             >
               <HardDrive size={20} />
