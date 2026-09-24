@@ -43,6 +43,14 @@ function ProfileTab({ user, setUser, loading, setLoading, setMessage, API_BASE }
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
+    
+    if (editSubView === 'recoveryEmail' && profileForm.recoveryEmail) {
+      if (!profileForm.recoveryEmail.endsWith('@bnxmail.com')) {
+        setMessage({ type: 'error', text: 'Only @bnxmail.com addresses are allowed for recovery email.' });
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       const token = localStorage.getItem('bnx_accessToken');
