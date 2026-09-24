@@ -444,7 +444,7 @@ function App() {
                 const token = localStorage.getItem('bnx_accessToken') || '';
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 const storageUrl = isLocal ? `http://localhost:5174/${token}` : `https://storage.beta-softnet.com/${token}`;
-                window.location.href = storageUrl;
+                window.open(storageUrl, '_blank');
               }}
             >
               <HardDrive size={20} />
